@@ -1,0 +1,16 @@
+Translation.addTranslation("Angel ring", {ru: "Ангельское кольцо"});
+Translation.addTranslation("XP Storage", {ru: "Хранилище опыта"});
+Translation.addTranslation("Builder wand", {ru: "Палочка строителя"});
+Translation.addTranslation("World Clock", {ru: "Мировые часы"});
+Translation.addTranslation("Magnet", {ru: "Магнит"});
+Translation.addTranslation("Item Collector", {ru: "Сборщик предметов"});
+Translation.addTranslation("Concentrated dust", {ru: "Концентрированная пыль"});
+Translation.addTranslation("Hammer", {ru: "Молот"});
+Translation.addTranslation("Flacon for souls", {ru: "Флакон для душ"});
+Translation.addTranslation("Flacon with soul", {ru: "Флакон с душой"});
+Translation.addTranslation("Description of death", {ru: "Описание смерти"});
+Translation.addTranslation("Update frequency (in ticks)", {ru: "Частота обновления (в тиках)"});
+Translation.addTranslation("Extraction pipe", {ru: "Извлекающая труба"});
+Translation.addTranslation("Item pipe", {ru: "Предметная труба"});
+Translation.addTranslation("Wrench", { ru: "Гаечный ключ" });
+Translation.addTranslation("1 second = 20 ticks", { ru: "1 секунда = 20 тиков" });

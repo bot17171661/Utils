@@ -25,7 +25,7 @@ Recipes.addShaped({
 
 var itemCollector_container = new UI.Container();
 
-var itemColRad = 15;
+var itemColRad = 10;
 
 TileEntity.registerPrototype(BlockID.itemCollector, {
     defaultValues: {
@@ -40,19 +40,17 @@ TileEntity.registerPrototype(BlockID.itemCollector, {
             output: ["slot"]
         };
     },
-    created: function() {
-        this.data.slot = this.container.getSlot("slot")
-    },
     click: function(id, count, data) {
-        if (this.data.slot.id == 0) return Game.message('Not available');
-        Game.message(Item.getName(this.data.slot.id, this.data.slot.data) + ' * ' + this.data.slot.count);
+        var container_slot = this.container.getSlot("slot");
+        if (container_slot.id == 0) return Game.message('Not available');
+        Game.message(Item.getName(container_slot.id, container_slot.data) + ' * ' + container_slot.count);
     },
     tick: function() {
-        //this.data.ticks++
-        //if (this.data.ticks >= 10) {
-            var x, y, z;
-            x = y = z = 0;
+        this.data.ticks++
+        if (this.data.ticks >= 5) {
             this.data.ticks = 0;
+            var container_slot = this.container.getSlot("slot");
+            var x, y, z;
             x = y = z = 0;
             for (var i in sides) {
                 if (World.getContainer(this.x + sides[i][0], this.y + sides[i][1], this.z + sides[i][2]) || World.addTileEntity(this.x + sides[i][0], this.y + sides[i][1], this.z + sides[i][2]) || World.getTileEntity(this.x + sides[i][0], this.y + sides[i][1], this.z + sides[i][2])) {
@@ -63,7 +61,7 @@ TileEntity.registerPrototype(BlockID.itemCollector, {
                 }
             }
             if (x != 0 || y != 0 || z != 0) {
-                if (this.data.slot.id != 0) {
+                if (container_slot.id != 0) {
                     var container = World.getContainer(this.x + x, this.y + y, this.z + z)
                     var tile = World.addTileEntity(this.x + x, this.y + y, this.z + z) || World.getTileEntity(this.x + x, this.y + y, this.z + z);
                     if (container || tile) {
@@ -76,7 +74,7 @@ TileEntity.registerPrototype(BlockID.itemCollector, {
                             for (var l = 0; l < size; l++) {
                                 var item = container.getSlot(tile.getTransportSlots().input[l]);
                                 if(!item) continue;
-                                if (item.id == 0 || (item.id == this.data.slot.id && item.data == this.data.slot.data && item.count < Item.getMaxStack(this.data.slot.id) && item.extra ==  this.data.slot.extra)) {
+                                if (item.id == 0 || (item.id == container_slot.id && item.data == container_slot.data && item.count < Item.getMaxStack(container_slot.id) && item.extra ==  container_slot.extra)) {
                                     slot = tile.getTransportSlots().input[l];
                                     break;
                                     //Game.message('Найден подходящий слот модной хрени');
@@ -84,34 +82,34 @@ TileEntity.registerPrototype(BlockID.itemCollector, {
                             };
                             if(slot){
                                 var slot_item = container.getSlot(slot);
-                                var count = Math.min(this.data.slot.count + slot_item.count, 64);
-                                var other = Math.max(this.data.slot.count + slot_item.count - 64, 0);
-                                container.setSlot(slot, this.data.slot.id, count, this.data.slot.data, this.data.slot.extra || null);
-                                this.data.slot.count = other;
-                                if (this.data.slot.count <= 0) {
-                                    this.data.slot.id = 0;
+                                var count = Math.min(container_slot.count + slot_item.count, 64);
+                                var other = Math.max(container_slot.count + slot_item.count - 64, 0);
+                                container.setSlot(slot, container_slot.id, count, container_slot.data, container_slot.extra || null);
+                                container_slot.count = other;
+                                if (container_slot.count <= 0) {
+                                    container_slot.id = 0;
                                 }
                             }
                         } else if (container) {
-                            Game.message('Найдена ванильная хрень');
+                            //Game.message('Найдена ванильная хрень');
                             var size = container.size
                             var slot;
                             for (var l = 0; l < size; l++) {
                                 var item = container.getSlot(l);
-                                if (item.id == 0 || (item.id == this.data.slot.id && item.data == this.data.slot.data && item.extra == this.data.slot.extra && item.count < Item.getMaxStack(this.data.slot.id))) {
+                                if (item.id == 0 || (item.id == container_slot.id && item.data == container_slot.data && item.extra == container_slot.extra && item.count < Item.getMaxStack(container_slot.id))) {
                                     slot = l;
                                     break;
                                     //Game.message('Найден подходящий слот ванильной хрени');
                                 }
                             };
-                            if(slot) {
+                            if(slot >= 0) {
                                 var slot_item = container.getSlot(slot);
-                                var count = Math.min(this.data.slot.count + slot_item.count, 64);
-                                var other = Math.max(this.data.slot.count + slot_item.count - 64, 0);
-                                container.setSlot(slot, this.data.slot.id, count, this.data.slot.data, this.data.slot.extra || null);
-                                this.data.slot.count = other;
-                                if (this.data.slot.count <= 0) {
-                                    this.data.slot.id = 0;
+                                var count = Math.min(container_slot.count + slot_item.count, 64);
+                                var other = Math.max(container_slot.count + slot_item.count - 64, 0);
+                                container.setSlot(slot, container_slot.id, count, container_slot.data, container_slot.extra || null);
+                                container_slot.count = other;
+                                if (container_slot.count <= 0) {
+                                    container_slot.id = 0;
                                 }
                             }
                         }
@@ -123,18 +121,18 @@ TileEntity.registerPrototype(BlockID.itemCollector, {
                 var ent = ents[i];
                 if (!ent) return;
                 var item = Entity.getDroppedItem(ent);
-                if (item.id == this.data.slot.id && item.data == this.data.slot.data && item.extra == this.data.slot.extra) {
-                    var count = Math.min(this.data.slot.count + item.count, 64);
-                    var other = Math.max(this.data.slot.count + item.count - 64, 0);
+                if (item.id == container_slot.id && item.data == container_slot.data && item.extra == container_slot.extra) {
+                    var count = Math.min(container_slot.count + item.count, 64);
+                    var other = Math.max(container_slot.count + item.count - 64, 0);
                     if(other == 0)
                         Entity.remove(ent);
                     else
                         Entity.setDroppedItem(ent, item.id, other, item.data, item.extra);
-                    this.data.slot.count = other;
-                    if (this.data.slot.count <= 0) {
-                        this.data.slot.id = 0;
+                    container_slot.count = other;
+                    if (container_slot.count <= 0) {
+                        container_slot.id = 0;
                     }
-                } else if (this.data.slot.id == 0) {
+                } else if (container_slot.id == 0) {
                     this.container.setSlot("slot", item.id, Math.min(item.count, 64), item.data, item.extra || null);
                     if (Entity.getDroppedItem(ent).count <= 0) {
                         Entity.remove(ent);
@@ -147,7 +145,7 @@ TileEntity.registerPrototype(BlockID.itemCollector, {
                 //Entity.getDroppedItem(Entity.getAllInRange(this, 5)[i])
             }
 
-        //}
+        }
     }
 });
 

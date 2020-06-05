@@ -141,7 +141,18 @@ Callback.addCallback("LevelLeft", function () {
 	groups = { last: 0 };
 });
 
+function setCarriedNull(){
+	onCallback('tick', function(){
+		if(Player.getCarriedItem().id != 0){
+			Player.setCarriedItem(0,0,0);
+		} else {
+			return 'delete';
+		}
+	})
+}
+
 Item.registerUseFunction("utilsItemGetter_item", function (coords, item, block) {
+	Game.prevent();
 	var relBlock = World.getBlock(coords.relative.x, coords.relative.y, coords.relative.z);
 	if (relBlock.id != 0 && relBlock.id != 9 && relBlock.id != 11) return;
 	blockData = getDataOnSide(coords.side);
@@ -157,6 +168,7 @@ Item.registerUseFunction("utilsItemGetter_item", function (coords, item, block) 
 });
 
 Item.registerUseFunction("utilsWire_item", function (coords, item, block) {
+	Game.prevent();
 	var relBlock = World.getBlock(coords.relative.x, coords.relative.y, coords.relative.z);
 	if (relBlock.id != 0 && relBlock.id != 9 && relBlock.id != 11) return;
 	World.setBlock(coords.relative.x, coords.relative.y, coords.relative.z, BlockID.utilsWire, 0);
@@ -455,21 +467,21 @@ function searchContainers(coordsf, outCoordsf) {
 				var cont = World.getContainer(coordss.x, coordss.y, coordss.z);
 				var tile = World.addTileEntity(coordss.x, coordss.y, coordss.z) || World.getTileEntity(coordss.x, coordss.y, coordss.z);
 				if (cont) {
-					//devLog("Что то найдено");
+					//devLog("Tile found");
 					tc = {
 						container: cont,
 						type: "vanilla",
 						side: i
 					};
 					if (!tile) {
-						//devLog("Найден ванильный контейнер");
+						//devLog("Vanilla tile");
 						tc.size = cont.size;
 						tc.slots = [];
 						for (var k = 0; k < tc.size; k++) {
 							tc.slots.push(k);
 						}
 					} else if (tile && tile.getTransportSlots && tile.getTransportSlots().input) {
-						//devLog("Найден контейнер из мода");
+						//devLog("Mod tile");
 						tc.type = "modded";
 						tc.TileEntity = tile;
 						if (tc.TileEntity.interface) tc.SI = true;
@@ -483,7 +495,7 @@ function searchContainers(coordsf, outCoordsf) {
 						}
 						tc.size = tc.slots.length;
 					} else if (tile && !tile.getTransportSlots) {
-						//devLog("У контейнера не указаны слоты");
+						//devLog("Container not have slots");
 						tc = false;
 					}
 				}
@@ -515,9 +527,6 @@ function searchContainers(coordsf, outCoordsf) {
 	}
 	outCoords.push(cts(outCoordsf));
 	asdds(coordsf);
-	/*Game.tipMessage(containers.map(function (coords) {
-		return cts(coords);
-	}).join(' | ') + '\n' + started.join(' | ') + '\n' + outCoords.join(' | '));*/
 	return containers;
 
 }
@@ -532,21 +541,21 @@ function targetIsContainer(coords, _item_data) {
 	var __container = World.getContainer(coordss.x, coordss.y, coordss.z)
 	var __tileentity = World.addTileEntity(coordss.x, coordss.y, coordss.z) || World.getTileEntity(coordss.x, coordss.y, coordss.z);
 	if (__container) {
-		//devLog("target Что то найдено");
+		//devLog("target found");
 		tc = {
 			container: __container,
 			type: "vanilla",
 			side: getSideOnData(_item_data)
 		};
 		if (!__tileentity) {
-			//devLog("target Найдена ванильная хрень");
+			//devLog("target vanilla tile");
 			tc.size = __container.size;
 			tc.slots = [];
 			for (var k = 0; k < tc.size; k++) {
 				tc.slots.push(k);
 			}
 		} else if (__tileentity && __tileentity.getTransportSlots && __tileentity.getTransportSlots().output) {
-			//devLog("target Найдена модная хрень");
+			//devLog("target mod tile");
 			tc.type = "modded";
 			tc.TileEntity = __tileentity;
 			if (tc.TileEntity.interface) tc.SI = true;

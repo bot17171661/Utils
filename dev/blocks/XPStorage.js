@@ -171,3 +171,12 @@ ModAPI.addAPICallback("WailaAPI", function (api) {
         return yPos;
     })
 })
+
+Callback.addCallback('LevelLoaded', function(){
+    var mas = [];
+    for(var i = 0; i < 100;i++){
+
+    }
+    Player.getExperience();
+    Player.setLevel()
+})

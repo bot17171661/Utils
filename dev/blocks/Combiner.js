@@ -220,7 +220,6 @@ var Combiner = {
 
 TileEntity.registerPrototype(BlockID.Combiner, {
     defaultValues: {
-        coords: null,
         anim1: null,
         anim2: null,
         ticks: 0,
@@ -247,7 +246,6 @@ TileEntity.registerPrototype(BlockID.Combiner, {
                 var anim1 = this.data.anim1;
                 var anim2 = this.data.anim2;
                 var used = this.data.used;
-                var coords = this.data.coords;
                 var rotation1 = this.data.rotation1;
                 var rotation2 = this.data.rotation2;
                 var crafting = this.data.crafting;
@@ -318,9 +316,6 @@ TileEntity.registerPrototype(BlockID.Combiner, {
             return true
         }
     },
-    created: function () {
-        this.data.coords = lastCoords;
-    },
     tick: function () {
         this.data.ticks++;
         if (this.data.ticks >= 10) {
@@ -335,7 +330,7 @@ TileEntity.registerPrototype(BlockID.Combiner, {
                         bonus_coords.z += 0.0625 / 2 + 0.0625 / 8 - 1 / 16 / 2 - 1 / 16 / 8;
                         this.data.rotation1 = [Math.PI / 2, Math.PI, 0];
                     }
-                    this.data.anim1 = new Animation.Item(this.data.coords.x + 0.3203125 - 1 / 16 / 2 - 1 / 16 / 8 + bonus_coords.x, this.data.coords.y + 0.870 + 1 / 16 / 4 * 3.5 + bonus_coords.y, this.data.coords.z + 0.4609375 + 1 / 16 / 2 + 1 / 16 / 8 + bonus_coords.z);
+                    this.data.anim1 = new Animation.Item(this.x + 0.3203125 - 1 / 16 / 2 - 1 / 16 / 8 + bonus_coords.x, this.y + 0.870 + 1 / 16 / 4 * 3.5 + bonus_coords.y, this.z + 0.4609375 + 1 / 16 / 2 + 1 / 16 / 8 + bonus_coords.z);
                     this.data.anim1.describeItem({
                         id: this.container.getSlot('item1').id,
                         count: 1,
@@ -360,7 +355,7 @@ TileEntity.registerPrototype(BlockID.Combiner, {
                         bonus_coords.z += 0.0625 / 2 + 0.0625 / 8 - 1 / 16 / 2 - 1 / 16 / 8;
                         this.data.rotation2 = [Math.PI / 2, Math.PI, 0];
                     }
-                    this.data.anim2 = new Animation.Item(this.data.coords.x + 0.7578125 - 1 / 16 / 2 - 1 / 16 / 8 + bonus_coords.x, this.data.coords.y + 0.870 + 1 / 16 / 4 * 3.5 + bonus_coords.y, this.data.coords.z + 0.4609375 + 1 / 16 / 2 + 1 / 16 / 8 + bonus_coords.z);
+                    this.data.anim2 = new Animation.Item(this.x + 0.7578125 - 1 / 16 / 2 - 1 / 16 / 8 + bonus_coords.x, this.y + 0.870 + 1 / 16 / 4 * 3.5 + bonus_coords.y, this.z + 0.4609375 + 1 / 16 / 2 + 1 / 16 / 8 + bonus_coords.z);
                     this.data.anim2.describeItem({
                         id: this.container.getSlot('item2').id,
                         count: 1,

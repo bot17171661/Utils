@@ -1,6 +1,3 @@
-var tickss = 0;
-
-var lastCoords;
 IDRegistry.genBlockID("itemCollector");
 
 Block.createBlock("itemCollector", [{
@@ -22,18 +19,12 @@ Recipes.addShaped({
     "cpc"
 ], ['h', 410, 0, 'p', 381, 0, 'c', 54, 0]);
 
-
-var itemCollector_container = new UI.Container();
-
 var itemColRad = 10;
 
 TileEntity.registerPrototype(BlockID.itemCollector, {
     defaultValues: {
-        coords: null,
-        slot: null,
         ticks: 0
     },
-    container: itemCollector_container,
     getTransportSlots: function() {
         return {
             //input: ["slot"],
@@ -82,8 +73,9 @@ TileEntity.registerPrototype(BlockID.itemCollector, {
                             };
                             if(slot){
                                 var slot_item = container.getSlot(slot);
-                                var count = Math.min(container_slot.count + slot_item.count, 64);
-                                var other = Math.max(container_slot.count + slot_item.count - 64, 0);
+                                var max_stack = Item.getMaxStack(slot_item.id);
+                                var count = Math.min(container_slot.count + slot_item.count, slot_item);
+                                var other = Math.max(container_slot.count + slot_item.count - slot_item, 0);
                                 container.setSlot(slot, container_slot.id, count, container_slot.data, container_slot.extra || null);
                                 container_slot.count = other;
                                 if (container_slot.count <= 0) {
@@ -104,8 +96,9 @@ TileEntity.registerPrototype(BlockID.itemCollector, {
                             };
                             if(slot >= 0) {
                                 var slot_item = container.getSlot(slot);
-                                var count = Math.min(container_slot.count + slot_item.count, 64);
-                                var other = Math.max(container_slot.count + slot_item.count - 64, 0);
+                                var max_stack = Item.getMaxStack(slot_item.id);
+                                var count = Math.min(container_slot.count + slot_item.count, max_stack);
+                                var other = Math.max(container_slot.count + slot_item.count - max_stack, 0);
                                 container.setSlot(slot, container_slot.id, count, container_slot.data, container_slot.extra || null);
                                 container_slot.count = other;
                                 if (container_slot.count <= 0) {
@@ -121,9 +114,10 @@ TileEntity.registerPrototype(BlockID.itemCollector, {
                 var ent = ents[i];
                 if (!ent) return;
                 var item = Entity.getDroppedItem(ent);
+                var max_stack = Item.getMaxStack(item.id);
                 if (item.id == container_slot.id && item.data == container_slot.data && item.extra == container_slot.extra) {
-                    var count = Math.min(container_slot.count + item.count, 64);
-                    var other = Math.max(container_slot.count + item.count - 64, 0);
+                    var count = Math.min(container_slot.count + item.count, max_stack);
+                    var other = Math.max(container_slot.count + item.count - max_stack, 0);
                     if(other == 0)
                         Entity.remove(ent);
                     else
@@ -133,10 +127,8 @@ TileEntity.registerPrototype(BlockID.itemCollector, {
                         container_slot.id = 0;
                     }
                 } else if (container_slot.id == 0) {
-                    this.container.setSlot("slot", item.id, Math.min(item.count, 64), item.data, item.extra || null);
-                    if (Entity.getDroppedItem(ent).count <= 0) {
-                        Entity.remove(ent);
-                    };
+                    var other = Math.max(container_slot.count + item.count - max_stack, 0);
+                    this.container.setSlot("slot", item.id, Math.min(item.count, max_stack), item.data, item.extra || null);
                     if(other == 0)
                         Entity.remove(ent);
                     else
@@ -147,10 +139,6 @@ TileEntity.registerPrototype(BlockID.itemCollector, {
 
         }
     }
-});
-
-Callback.addCallback("BuildBlock", function(coords, block, entity) {
-    lastCoords = coords.relative;
 });
 
 ModAPI.addAPICallback("WailaAPI", function(api) {

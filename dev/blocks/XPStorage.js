@@ -18,7 +18,7 @@ Recipes.addShaped({ id: BlockID.XPStorage, count: 1, data: 0 }, [
     "ibi"
 ], ['b', 42, 0, 'g', 266, 0, 'i', 265, 0]);
 
-var guiXPS = new UI.StandartWindow({
+/*var guiXPS = new UI.StandartWindow({
     standart: {
         header: {
             text: {
@@ -170,13 +170,4 @@ ModAPI.addAPICallback("WailaAPI", function (api) {
         api.Waila.requireHeight(20);
         return yPos;
     })
-})
-
-Callback.addCallback('LevelLoaded', function(){
-    var mas = [];
-    for(var i = 0; i < 100;i++){
-
-    }
-    Player.getExperience();
-    Player.setLevel()
-})
+})*/

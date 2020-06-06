@@ -34,7 +34,7 @@ TileEntity.registerPrototype(BlockID.itemCollector, {
     click: function(id, count, data) {
         var container_slot = this.container.getSlot("slot");
         if (container_slot.id == 0) return Game.message('Not available');
-        Game.message(Item.getName(container_slot.id, container_slot.data) + ' * ' + container_slot.count);
+        Game.message(Item.getName(container_slot.id, container_slot.data).split('\n')[0] + ' * ' + container_slot.count);
     },
     tick: function() {
         this.data.ticks++
@@ -56,8 +56,9 @@ TileEntity.registerPrototype(BlockID.itemCollector, {
                     var container = World.getContainer(this.x + x, this.y + y, this.z + z)
                     var tile = World.addTileEntity(this.x + x, this.y + y, this.z + z) || World.getTileEntity(this.x + x, this.y + y, this.z + z);
                     if (container || tile) {
-                        //Game.message('Что то найдено');
+                        //Game.message('Tile entity found');
                         if (tile && tile.getTransportSlots && tile.getTransportSlots().input) {
+                            //Game.message('This is mod tile');
                             container = tile.container;
                             Game.message('Найдена модная хрень');
                             var size = tile.getTransportSlots().input.length
@@ -68,7 +69,7 @@ TileEntity.registerPrototype(BlockID.itemCollector, {
                                 if (item.id == 0 || (item.id == container_slot.id && item.data == container_slot.data && item.count < Item.getMaxStack(container_slot.id) && item.extra ==  container_slot.extra)) {
                                     slot = tile.getTransportSlots().input[l];
                                     break;
-                                    //Game.message('Найден подходящий слот модной хрени');
+                                    //Game.message('Slot of mod tile found');
                                 }
                             };
                             if(slot){
@@ -83,7 +84,7 @@ TileEntity.registerPrototype(BlockID.itemCollector, {
                                 }
                             }
                         } else if (container) {
-                            //Game.message('Найдена ванильная хрень');
+                            //Game.message('This is vanilla tile');
                             var size = container.size
                             var slot;
                             for (var l = 0; l < size; l++) {
@@ -91,7 +92,7 @@ TileEntity.registerPrototype(BlockID.itemCollector, {
                                 if (item.id == 0 || (item.id == container_slot.id && item.data == container_slot.data && item.extra == container_slot.extra && item.count < Item.getMaxStack(container_slot.id))) {
                                     slot = l;
                                     break;
-                                    //Game.message('Найден подходящий слот ванильной хрени');
+                                    //Game.message('Slot of vanilla tile found');
                                 }
                             };
                             if(slot >= 0) {
@@ -109,11 +110,12 @@ TileEntity.registerPrototype(BlockID.itemCollector, {
                     }
                 }
             }
-            var ents = Entity.getAllInRange(this, itemColRad, 64) || [];
+            var ents = Entity.getAllInRange(this, itemColRad, 64);
             for (var i in ents) {
                 var ent = ents[i];
-                if (!ent) return;
+                if (!ent) continue;
                 var item = Entity.getDroppedItem(ent);
+                if(!item) continue;
                 var max_stack = Item.getMaxStack(item.id);
                 if (item.id == container_slot.id && item.data == container_slot.data && item.extra == container_slot.extra) {
                     var count = Math.min(container_slot.count + item.count, max_stack);
@@ -134,7 +136,6 @@ TileEntity.registerPrototype(BlockID.itemCollector, {
                     else
                         Entity.setDroppedItem(ent, item.id, other, item.data, item.extra);
                 }
-                //Entity.getDroppedItem(Entity.getAllInRange(this, 5)[i])
             }
 
         }

@@ -43,14 +43,14 @@ Block.createBlock("utilsItemGetter", [{
 	texture: [
 		["stone", 0]
 	],
-	inCreative: true
+	inCreative: false
 }, //right
 {
 	name: "Extraction pipe",
 	texture: [
 		["stone", 0]
 	],
-	inCreative: false
+	inCreative: true
 }, //forward
 {
 	name: "Extraction pipe",
@@ -813,7 +813,7 @@ TileEntity.registerPrototype(BlockID.utilsItemGetter, {
 		ignore_item_data: false
 	},
 	getGuiScreen: function () {
-		if (Player.getCarriedItem().id == ItemID.utilsWrench) return;
+		if (Player.getCarriedItem().id == ItemID.utilsWrench || Entity.getSneaking(Player.get())) return;
 		Game.prevent();
 		if(!this.container.isOpened())this.container.openAs(wireGUI);
 		var content = this.container.getGuiContent();

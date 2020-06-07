@@ -1,6 +1,8 @@
 const BitmapFactory = android.graphics.BitmapFactory;
 const Bitmap = android.graphics.Bitmap;
 
+var InnerCore_pack = FileTools.ReadJSON(__packdir__ + 'manifest.json');
+
 Callback['com.ulalald.asd'] = Callback['com.ulalald.asd'] || [];
 Callback['com.ulalald.asd.ddd'] = false;
 const mod = FileTools.ReadJSON(__dir__ + 'mod.info');

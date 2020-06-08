@@ -82,8 +82,7 @@ function InitXPStorage(){
             type: "text",
             x: 1000/2,
             y: xpStorageButtonSettings.y + 20*xpStorageButtonSettings.scale + 20*xpStorageButtonSettings.scale/2,
-            width: 300,
-            height: 30,
+            z: 10,
             text: "0",
             font: {
                 color: android.graphics.Color.rgb(127, 255, 0),
@@ -92,6 +91,19 @@ function InitXPStorage(){
             }
         }
         XPStorage_elements["text"].y -= XPStorage_elements["text"].font.size/2;
+        XPStorage_elements["playerxp"] = {
+            type: "text",
+            x: 1000/2,
+            y: 0,
+            z: 10,
+            text: "0",
+            font: {
+                color: android.graphics.Color.rgb(127, 255, 0),
+                shadow: 0.5,
+                size: 20
+            }
+        }
+        XPStorage_elements["playerxp"].y = UI.getScreenHeight() - XPStorage_elements["playerxp"].font.size - 20 - 80;
         XPStorage_elements["xpall"] = {
             type: "button",
             x: xpStorageButtonSettings.x1,
@@ -101,7 +113,6 @@ function InitXPStorage(){
             scale: xpStorageButtonSettings.scale,
             clicker: {
                 onClick: function(container, tile) {
-                    var content = container.getGuiContent();
                     tile.data.XP += Player.getExperience();
                     //Game.tipMessage(Native.Color.RED + '-' + Player.getLevel() + ' lvl');
                     Player.setLevel(0);
@@ -135,10 +146,11 @@ function InitXPStorage(){
             scale: xpStorageButtonSettings.scale,
             clicker: {
                 onClick: function(container, tile) {
-                    if (Player.getLevel() == 0) return;
+                    var player_lvl = Player.getLevel();
+                    if (player_lvl == 0) return;
                     var xp = Player.getExperience();
-                    var setLvl = Math.min(Player.getLevel(), 5);
-                    Player.setLevel(Player.getLevel() - setLvl);
+                    var setLvl = Math.min(player_lvl, 5);
+                    Player.setLevel(player_lvl - setLvl);
                     tile.data.XP += xp - Player.getExperience();
                     //Game.tipMessage(Native.Color.RED + '-5 lvl');
                     tile.updateText();
@@ -155,9 +167,9 @@ function InitXPStorage(){
             clicker: {
                 onClick: function(container, tile) {
                     if (tile.data.XP == 0) return;
-                    var xp = Math.min(tile.data.XP, (LVLtoXP(Player.getLevel() + 5) - Player.getExperience()));
-                    Player.addExperience(xp);
+                    var xp = Math.min(tile.data.XP, LVLtoXP(Player.getLevel() + 5) - Player.getExperience() + 1);
                     tile.data.XP -= xp;
+                    Player.addExperience(xp);
                     //Game.tipMessage(Native.Color.GREEN + '+5 lvl');
                     tile.updateText();
                 }
@@ -172,9 +184,10 @@ function InitXPStorage(){
             scale: xpStorageButtonSettings.scale,
             clicker: {
                 onClick: function(container, tile) {
-                    if (Player.getLevel() == 0) return;
+                    var player_lvl = Player.getLevel();
+                    if (player_lvl == 0) return;
                     var xp = Player.getExperience();
-                    Player.setLevel(Player.getLevel() - 1);
+                    Player.setLevel(player_lvl - 1);
                     tile.data.XP += xp - Player.getExperience();
                     //Game.tipMessage(Native.Color.RED + '-1 lvl');
                     tile.updateText();
@@ -191,9 +204,9 @@ function InitXPStorage(){
             clicker: {
                 onClick: function(container, tile) {
                     if (tile.data.XP == 0) return;
-                    var xp = Math.min(tile.data.XP, (LVLtoXP(Player.getLevel() + 1) - Player.getExperience()));
-                    Player.addExperience(xp);
+                    var xp = Math.min(tile.data.XP, LVLtoXP(Player.getLevel() + 1) - Player.getExperience() + 1);
                     tile.data.XP -= xp;
+                    Player.addExperience(xp);
                     //Game.tipMessage(Native.Color.GREEN + '+1 lvl');
                     tile.updateText();
                 }
@@ -250,17 +263,19 @@ function InitXPStorage(){
         defaultValues: {
             XP: 0
         },
-        getGuiScreen: function () {
-            if(Entity.getSneaking(Player.get())) return;
+        click: function () {
+            if(Entity.getSneaking(Player.get())) return false;
             if (!this.container.isOpened())this.container.openAs(guiXPS);
             this.updateText();
+            return true;
         },
         updateText: function(){
             if (this.container.isOpened()) {
                 var content = this.container.getGuiContent();
                 var xp_data = XPtoLVL(this.data.XP);
-                content.elements.text.text = "" + xp_data.lvl;
+                this.container.setText('text', "" + xp_data.lvl);
                 content.elements.text.x = 1000/2 - content.elements.text.text.length*content.elements.text.font.size/2;
+                content.elements.playerxp.x = 1000/2 - content.elements.playerxp.text.length*content.elements.playerxp.font.size/2;
                 var next_xp = LVLtoXP(xp_data.lvl + 1);
                 var this_xp = LVLtoXP(xp_data.lvl);
                 var other_xp_data = {
@@ -268,6 +283,11 @@ function InitXPStorage(){
                     next_xp: next_xp - this_xp
                 }
                 content.elements.xp_bar.value = other_xp_data.xp/other_xp_data.next_xp;
+            }
+        },
+        tick: function(){
+            if (this.container.isOpened()) {
+                this.container.setText('playerxp', "" + Player.getLevel());
             }
         },
         destroy: function () {

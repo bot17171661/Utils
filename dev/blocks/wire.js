@@ -13,23 +13,6 @@ Block.createBlock("utilsWire", [{
 }]);
 mod_tip(BlockID.utilsWire);
 
-IDRegistry.genItemID("utilsWire_item");
-Item.createItem("utilsWire_item", "Item pipe", {
-	name: "pipe_item"
-}, {
-	stack: 64
-});
-mod_tip(ItemID.utilsWire_item);
-Recipes.addShaped({
-	id: ItemID.utilsWire_item,
-	count: 16,
-	data: 0
-}, [
-	"sss",
-	"iii",
-	"sss"
-], ['i', 265, 0, 's', 1, 0]);
-
 IDRegistry.genBlockID("utilsItemGetter");
 Block.createBlock("utilsItemGetter", [{
 	name: "Extraction pipe",
@@ -75,23 +58,6 @@ Block.createBlock("utilsItemGetter", [{
 } //down
 ]);
 mod_tip(BlockID.utilsItemGetter);
-
-IDRegistry.genItemID("utilsItemGetter_item");
-Item.createItem("utilsItemGetter_item", "Extraction pipe", {
-	name: "Epipe_item"
-}, {
-	stack: 64
-});
-mod_tip(ItemID.utilsItemGetter_item);
-Recipes.addShaped({
-	id: ItemID.utilsItemGetter_item,
-	count: 1,
-	data: 0
-}, [
-	"ssi",
-	"iih",
-	"ssi"
-], ['i', 265, 0, 's', 1, 0, 'h', 410, 0]);
 
 var blacklist = {};
 
@@ -141,17 +107,7 @@ Callback.addCallback("LevelLeft", function () {
 	groups = { last: 0 };
 });
 
-function setCarriedNull(){
-	onCallback('tick', function(){
-		if(Player.getCarriedItem().id != 0){
-			Player.setCarriedItem(0,0,0);
-		} else {
-			return 'delete';
-		}
-	})
-}
-
-Item.registerUseFunction("utilsItemGetter_item", function (coords, item, block) {
+function utilsItemGetter_func(coords){
 	Game.prevent();
 	var relBlock = World.getBlock(coords.relative.x, coords.relative.y, coords.relative.z);
 	if (relBlock.id != 0 && relBlock.id != 9 && relBlock.id != 11) return;
@@ -165,9 +121,9 @@ Item.registerUseFunction("utilsItemGetter_item", function (coords, item, block) 
 		meta: blockData
 	};
 	mapGetter(coords.relative, groups.last, blockData);
-});
+}
 
-Item.registerUseFunction("utilsWire_item", function (coords, item, block) {
+function utilsWire_func(coords){
 	Game.prevent();
 	var relBlock = World.getBlock(coords.relative.x, coords.relative.y, coords.relative.z);
 	if (relBlock.id != 0 && relBlock.id != 9 && relBlock.id != 11) return;
@@ -178,19 +134,91 @@ Item.registerUseFunction("utilsWire_item", function (coords, item, block) {
 		i: groups.last
 	};
 	mapGetter(coords.relative, groups.last);
-});
+}
 
-Block.registerDropFunction("utilsWire", function (coords, id, data, diggingLevel, toolLevel) {
-	delete groups[coords.x + "," + coords.y + "," + coords.z];
-	BlockRenderer.unmapAtCoords(coords.x, coords.y, coords.z);
-	return [[ItemID.utilsWire_item, 1, 0]];
-});
+Block.registerPlaceFunction('utilsItemGetter', utilsItemGetter_func);
+Block.registerPlaceFunction('utilsWire', utilsWire_func);
 
-Block.registerDropFunction("utilsItemGetter", function (coords, id, data, diggingLevel, toolLevel) {
-	delete groups[coords.x + "," + coords.y + "," + coords.z];
-	BlockRenderer.unmapAtCoords(coords.x, coords.y, coords.z);
-	return [[ItemID.utilsItemGetter_item, 1, 0]];
-});
+if(InnerCore_pack.packVersionCode >= 58){
+	Block.registerDropFunction("utilsWire", function (coords, id, data, diggingLevel, toolLevel) {
+		delete groups[coords.x + "," + coords.y + "," + coords.z];
+		BlockRenderer.unmapAtCoords(coords.x, coords.y, coords.z);
+		return [[BlockID.utilsWire, 1, 0]];
+	});
+	Block.registerDropFunction("utilsItemGetter", function (coords, id, data, diggingLevel, toolLevel) {
+		delete groups[coords.x + "," + coords.y + "," + coords.z];
+		BlockRenderer.unmapAtCoords(coords.x, coords.y, coords.z);
+		return [[BlockID.utilsItemGetter, 1, 2]];
+	});
+	Recipes.addShaped({
+		id: BlockID.utilsWire,
+		count: 16,
+		data: 0
+	}, [
+		"sss",
+		"iii",
+		"sss"
+	], ['i', 265, 0, 's', 1, 0]);
+	Recipes.addShaped({
+		id: BlockID.utilsItemGetter,
+		count: 1,
+		data: 2
+	}, [
+		"ssi",
+		"iih",
+		"ssi"
+	], ['i', 265, 0, 's', 1, 0, 'h', 410, 0]);
+} else {
+	Item.registerUseFunction("utilsItemGetter_item", utilsItemGetter_func);
+	Item.registerUseFunction("utilsWire_item", utilsWire_func);
+	Block.registerDropFunction("utilsWire", function (coords, id, data, diggingLevel, toolLevel) {
+		delete groups[coords.x + "," + coords.y + "," + coords.z];
+		BlockRenderer.unmapAtCoords(coords.x, coords.y, coords.z);
+		return [[ItemID.utilsWire_item, 1, 0]];
+	});
+	Block.registerDropFunction("utilsItemGetter", function (coords, id, data, diggingLevel, toolLevel) {
+		delete groups[coords.x + "," + coords.y + "," + coords.z];
+		BlockRenderer.unmapAtCoords(coords.x, coords.y, coords.z);
+		return [[ItemID.utilsItemGetter_item, 1, 0]];
+	});
+	IDRegistry.genItemID("utilsWire_item");
+	Item.createItem("utilsWire_item", "Item pipe", {
+		name: "pipe_item"
+	}, {
+		stack: 64
+	});
+	mod_tip(ItemID.utilsWire_item);
+	Recipes.addShaped({
+		id: ItemID.utilsWire_item,
+		count: 16,
+		data: 0
+	}, [
+		"sss",
+		"iii",
+		"sss"
+	], ['i', 265, 0, 's', 1, 0]);
+
+	IDRegistry.genItemID("utilsItemGetter_item");
+	Item.createItem("utilsItemGetter_item", "Extraction pipe", {
+		name: "Epipe_item"
+	}, {
+		stack: 64
+	});
+	mod_tip(ItemID.utilsItemGetter_item);
+	Recipes.addShaped({
+		id: ItemID.utilsItemGetter_item,
+		count: 1,
+		data: 0
+	}, [
+		"ssi",
+		"iih",
+		"ssi"
+	], ['i', 265, 0, 's', 1, 0, 'h', 410, 0]);
+}
+
+
+const width = 0.1875;
+const centerWidth = 0.3125;
 
 (function () {
 
@@ -218,9 +246,6 @@ Block.registerDropFunction("utilsItemGetter", function (coords, id, data, diggin
 			[0.2, 0, 0.2, 0.8, 0.03, 0.8] //down
 		]
 	];
-
-	var width = 0.2;
-	var centerWidth = 0.3;
 
 	var boxesWire = [
 		[0.5 - width / 2, 0.5 - width / 2, 0, 0.5 + width / 2, 0.5 + width / 2, 0.5 - width / 2], //left
@@ -314,9 +339,6 @@ function mapGetter(coords, i, meta, atach) {
 			[0.2, 0, 0.2, 0.8, 0.03, 0.8] //down
 		]
 	];
-
-	var width = 0.2;
-	var centerWidth = 0.3;
 
 	var boxesWire = [
 		[0.5 - width / 2, 0.5 - width / 2, 0, 0.5 + width / 2, 0.5 + width / 2, 0.5 - width / 2], //left
@@ -639,7 +661,7 @@ function init_wireGUI_elements(){
 		x: 100 + 225,
 		y: 200,
 		length: 800 - 225,
-		min: 1,
+		min: 5,
 		max: 120,
 		isInt: true,
 		value: 0,
@@ -647,9 +669,8 @@ function init_wireGUI_elements(){
 			var container = element.window.getContainer();
 			if(container){
 				var tile = container.tileEntity;
-				var content = container.getGuiContent();
 				tile.data.updateFreq = value;
-				content.elements.text.text = Translation.translate("Update frequency (in ticks)") + " : " + tile.data.updateFreq;
+				container.setText('text', Translation.translate("Update frequency (in ticks)") + " : " + tile.data.updateFreq);
 			}
 		}
 	},
@@ -812,9 +833,8 @@ TileEntity.registerPrototype(BlockID.utilsItemGetter, {
 		list_mode: 'black_list',
 		ignore_item_data: false
 	},
-	getGuiScreen: function () {
-		if (Player.getCarriedItem().id == ItemID.utilsWrench || Entity.getSneaking(Player.get())) return;
-		Game.prevent();
+	click: function () {
+		if (wrenches.indexOf(Player.getCarriedItem().id) != -1 || Entity.getSneaking(Player.get())) return false;
 		if(!this.container.isOpened())this.container.openAs(wireGUI);
 		var content = this.container.getGuiContent();
 		var tile = this;
@@ -841,6 +861,7 @@ TileEntity.registerPrototype(BlockID.utilsItemGetter, {
 			content.elements["image_ignore_item_data"].bitmap = 'item_data_not_ignore';
 		}
 		content.elements["image_list_mode"].bitmap = 'wire_' + this.data.list_mode;
+		return true;
 	},
 	created: function () {
 		this.data.blockData = World.getBlock(this.x, this.y, this.z).data;
@@ -873,5 +894,6 @@ TileEntity.registerPrototype(BlockID.utilsItemGetter, {
 		if (!this.data.black_list)this.data.black_list = [];
 		if (!this.data.white_list)this.data.white_list = [];
 		searchContainers(this, this.data.target);
+		this.data.updateFreq = Math.max(5, Math.min(this.data.updateFreq, 120));
 	}
 })

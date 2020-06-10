@@ -602,7 +602,10 @@ function searchExportSlot(tile1, wireTile) {
 		if (container.getSlot(slots[i]).id != 0 && (!tile1.SI || !tile1.TileEntity.interface.slots[slots[i]].canOutput || tile1.TileEntity.interface.slots[slots[i]].canOutput(container.getSlot(slots[i]), tile1.side, tile1.TileEntity))) {
 			//devLog("True slot: " + slots[i]);
 			var item = container.getSlot(slots[i]);
-			if ((wireTile.data.black_list.length == 0 || !wireTile.data.black_list.find(_whiteList, {item: item, ignore_item_data: wireTile.data.ignore_item_data})) && (wireTile.data.white_list.length == 0 || wireTile.data.white_list.find(_whiteList, {item: item, ignore_item_data: wireTile.data.ignore_item_data}))) return slots[i];
+			if ((wireTile.data.black_list.length == 0 || !wireTile.data.black_list.find(_whiteList, {item: item, ignore_item_data: wireTile.data.ignore_item_data})) && (wireTile.data.white_list.length == 0 || wireTile.data.white_list.find(_whiteList, {item: item, ignore_item_data: wireTile.data.ignore_item_data}))) 
+				return slots[i];
+			else
+				continue;
 		} else {
 			//devLog("Slot not found");
 			continue;
@@ -714,7 +717,6 @@ function init_wireGUI_elements(){
 					var index = tile.data[tile.data.list_mode].findIndex(function(elem, index){
 						if(elem.id == item.id && (elem.data == -1 || elem.data == item.data)) return true;
 					});
-					alert(index);
 					if(index >= 0){
 						tile.data[tile.data.list_mode].splice(index, 1);
 					}
@@ -895,5 +897,8 @@ TileEntity.registerPrototype(BlockID.utilsItemGetter, {
 		if (!this.data.white_list)this.data.white_list = [];
 		searchContainers(this, this.data.target);
 		this.data.updateFreq = Math.max(5, Math.min(this.data.updateFreq, 120));
+	},
+	destroy: function(){
+		this.container.slots = {};
 	}
 })

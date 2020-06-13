@@ -855,6 +855,7 @@ TileEntity.registerPrototype(BlockID.utilsItemGetter, {
 				content.elements['slot'+i].visual = false;
 		}
 		content.elements.DellayScroll.value = this.data.updateFreq;
+		this.container.setScale('DellayScroll', this.data.updateFreq);
 		content.elements.text.text = Translation.translate("Update frequency (in ticks)") + " : " + this.data.updateFreq;
 		content.elements.text2.text = Translation.translate("1 second = 20 ticks");
 		if (this.data.ignore_item_data) {

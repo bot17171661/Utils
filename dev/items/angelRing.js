@@ -26,11 +26,25 @@ Callback.addCallback("tick", function() {
 		}
 	} else if (ringEquiped && !baubleEquip) {
 		if (!searchItem(ItemID.angelRing)) {
-			Player.setFlyingEnabled(false);
 			ringEquiped = false;
+			if(Game.getGameMode() != 1){
+				Player.setFlyingEnabled(false);
+				Player.setFlying(false);
+			}
 		}
 	}
 });
+
+(function(){
+	var superTempPlayerSetFlyingEnabled = Player.setFlyingEnabled;
+	var superTempPlayerSetFlying = Player.setFlying;
+	Player.setFlyingEnabled = function(enabled, forced){
+		if(!ringEquiped || forced)superTempPlayerSetFlyingEnabled(enabled);
+	}
+	Player.setFlying = function(enabled, forced){
+		if(!ringEquiped || forced)superTempPlayerSetFlying(enabled);
+	}
+})()
 
 ModAPI.addAPICallback("BaublesAPI", function(api) {
 	api.Baubles.registerBauble({
@@ -42,9 +56,10 @@ ModAPI.addAPICallback("BaublesAPI", function(api) {
 			baubleEquip = true;
 		},
 		onTakeOff: function() {
-			Player.setFlyingEnabled(false);
 			ringEquiped = false;
 			baubleEquip = false;
+			Player.setFlyingEnabled(false);
+			Player.setFlying(false);
 		}
 	});
 })

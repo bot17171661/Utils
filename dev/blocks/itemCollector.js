@@ -60,7 +60,6 @@ TileEntity.registerPrototype(BlockID.itemCollector, {
                         if (tile && tile.getTransportSlots && tile.getTransportSlots().input) {
                             //Game.message('This is mod tile');
                             container = tile.container;
-                            Game.message('Найдена модная хрень');
                             var size = tile.getTransportSlots().input.length
                             var slot;
                             for (var l = 0; l < size; l++) {
@@ -74,9 +73,9 @@ TileEntity.registerPrototype(BlockID.itemCollector, {
                             };
                             if(slot){
                                 var slot_item = container.getSlot(slot);
-                                var max_stack = Item.getMaxStack(slot_item.id);
-                                var count = Math.min(container_slot.count + slot_item.count, slot_item);
-                                var other = Math.max(container_slot.count + slot_item.count - slot_item, 0);
+                                var max_stack = Item.getMaxStack(container_slot.id);
+                                var count = Math.min(container_slot.count + slot_item.count, max_stack);
+                                var other = Math.max(container_slot.count + slot_item.count - max_stack, 0);
                                 container.setSlot(slot, container_slot.id, count, container_slot.data, container_slot.extra || null);
                                 container_slot.count = other;
                                 if (container_slot.count <= 0) {
@@ -97,7 +96,7 @@ TileEntity.registerPrototype(BlockID.itemCollector, {
                             };
                             if(slot >= 0) {
                                 var slot_item = container.getSlot(slot);
-                                var max_stack = Item.getMaxStack(slot_item.id);
+                                var max_stack = Item.getMaxStack(container_slot.id);
                                 var count = Math.min(container_slot.count + slot_item.count, max_stack);
                                 var other = Math.max(container_slot.count + slot_item.count - max_stack, 0);
                                 container.setSlot(slot, container_slot.id, count, container_slot.data, container_slot.extra || null);

@@ -1,6 +1,14 @@
 const BitmapFactory = android.graphics.BitmapFactory;
 const Bitmap = android.graphics.Bitmap;
 
+const Timer = java.util.Timer;
+const TimerTask = java.util.TimerTask;
+
+const JAVA_ANIMATOR = android.animation.ValueAnimator;
+const JAVA_HANDLER = android.os.Handler;
+const LOOPER_THREAD = android.os.Looper;
+const JAVA_HANDLER_THREAD = new JAVA_HANDLER(LOOPER_THREAD.getMainLooper());
+
 var InnerCore_pack = FileTools.ReadJSON(__packdir__ + 'manifest.json');
 
 Callback['com.ulalald.asd'] = Callback['com.ulalald.asd'] || [];
@@ -181,9 +189,6 @@ const setCharAt = function (str, index, chr) {
 	return str.substr(0, index) + chr + str.substr(index + chr.length);
 }
 
-const Timer = java.util.Timer;
-const TimerTask = java.util.TimerTask;
-
 const jSetInterval = function (__fun, __mil) {
 	var timer = new Timer();
 	var task = new TimerTask({
@@ -246,9 +251,11 @@ function onCallback(name, func) {
 }
 
 const setTimeout = function (func, _ticks) {
+	var ticks__ = 0;
 	return {
 		id: onCallback('tick', function () {
-			if (World.getThreadTime() % _ticks == _ticks - 1) {
+			ticks__++;
+			if (ticks__ >= _ticks) {
 				func()
 				return 'delete';
 			}
@@ -259,9 +266,12 @@ const setTimeout = function (func, _ticks) {
 
 const setInterval = function (func, _ticks, _first) {
 	if (_first && func()) return;
+	var ticks__ = 0;
 	return {
 		id: onCallback('tick', function () {
-			if (World.getThreadTime() % _ticks == _ticks - 1) {
+			ticks__++;
+			if (ticks__ >= _ticks) {
+				ticks__ = 0;
 				if (func()) return 'delete';
 			}
 		}),
@@ -270,9 +280,11 @@ const setInterval = function (func, _ticks, _first) {
 }
 
 const setTimeoutLocal = function (func, _ticks) {
+	var ticks__ = 0;
 	return {
 		id: onCallback('LocalTick', function () {
-			if (World.getThreadTime() % _ticks == _ticks - 1) {
+			ticks__++;
+			if (ticks__ >= _ticks) {
 				func()
 				return 'delete';
 			}
@@ -283,9 +295,11 @@ const setTimeoutLocal = function (func, _ticks) {
 
 const setIntervalLocal = function (func, _ticks, _first) {
 	if (_first && func()) return;
+	var ticks__ = 0;
 	return {
 		id: onCallback('LocalTick', function () {
-			if (World.getThreadTime() % _ticks == _ticks - 1) {
+			ticks__++;
+			if (ticks__ >= _ticks) {
 				if (func()) return 'delete';
 			}
 		}),
@@ -296,6 +310,7 @@ const setIntervalLocal = function (func, _ticks, _first) {
 const clearInterval = function (upd) {
 	if (upd && upd.id >= 0) {
 		onCallbacks[upd.name].splice(upd.id, 1);
+		upd = false;
 	}
 }
 
@@ -389,3 +404,27 @@ const newSides = [
 	[-1, 0, 0],
 	[1, 0, 0]
 ]
+
+const createAnim = function(_values, _duration, _updateFunc){
+	var animation = JAVA_ANIMATOR.ofInt(_values);
+	animation.setDuration(_duration);
+	if(_updateFunc)animation.addUpdateListener({
+		onAnimationUpdate : function(updatedAnim){
+			_updateFunc(updatedAnim.getAnimatedValue(), updatedAnim);
+		}
+	});
+	JAVA_HANDLER_THREAD.post({
+		run: function(){
+			animation.start();
+		}
+	})
+	return animation;
+}
+
+const stopAnim = function(_animation){
+	if(_animation && _animation.end && _animation.isStarted())JAVA_HANDLER_THREAD.post({
+		run: function(){
+			_animation.cancel();
+		}
+	})
+}

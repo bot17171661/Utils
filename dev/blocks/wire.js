@@ -226,34 +226,35 @@ const centerWidth = 0.3125;
 	group.add(BlockID.utilsItemGetter, -1);
 	group.add(BlockID.utilsWire, -1);
 
+	var sideSize = 0.03;
 	var boxes = [
 		[
-			[0.2, 0.2, 0, 0.8, 0.8, 0.03] //left
+			[0.2, 0.2, 0, 0.8, 0.8, sideSize] //left
 		],
 		[
-			[0.8, 0.8, 0.97, 0.2, 0.2, 1] //right
+			[0.8, 0.8, 1 - sideSize, 0.2, 0.2, 1] //right
 		],
 		[
-			[0.97, 0.8, 0.8, 1, 0.2, 0.2] //forward
+			[1 - sideSize, 0.8, 0.8, 1, 0.2, 0.2] //forward
 		],
 		[
-			[0, 0.2, 0.2, 0.03, 0.8, 0.8] //back
+			[0, 0.2, 0.2, sideSize, 0.8, 0.8] //back
 		],
 		[
-			[0.8, 0.97, 0.8, 0.2, 1, 0.2] //up
+			[0.8, 1 - sideSize, 0.8, 0.2, 1, 0.2] //up
 		],
 		[
-			[0.2, 0, 0.2, 0.8, 0.03, 0.8] //down
+			[0.2, 0, 0.2, 0.8, sideSize, 0.8] //down
 		]
 	];
 
 	var boxesWire = [
-		[0.5 - width / 2, 0.5 - width / 2, 0, 0.5 + width / 2, 0.5 + width / 2, 0.5 - width / 2], //left
-		[0.5 - width / 2, 0.5 - width / 2, 0.5 + width / 2, 0.5 + width / 2, 0.5 + width / 2, 1], //right
-		[0.5 + width / 2, 0.5 - width / 2, 0.5 - width / 2, 1, 0.5 + width / 2, 0.5 + width / 2], //forward
-		[0, 0.5 - width / 2, 0.5 - width / 2, 0.5 - width / 2, 0.5 + width / 2, 0.5 + width / 2], //back
-		[0.5 - width / 2, 0.5 + width / 2, 0.5 - width / 2, 0.5 + width / 2, 1, 0.5 + width / 2], //up
-		[0.5 - width / 2, 0, 0.5 - width / 2, 0.5 + width / 2, 0.5 - width / 2, 0.5 + width / 2] //down
+		[0.5 - width / 2, 0.5 - width / 2, 0 + sideSize, 0.5 + width / 2, 0.5 + width / 2, 0.5 - width / 2], //left
+		[0.5 - width / 2, 0.5 - width / 2, 0.5 + width / 2, 0.5 + width / 2, 0.5 + width / 2, 1 - sideSize], //right
+		[0.5 + width / 2, 0.5 - width / 2, 0.5 - width / 2, 1 - sideSize, 0.5 + width / 2, 0.5 + width / 2], //forward
+		[0 + sideSize, 0.5 - width / 2, 0.5 - width / 2, 0.5 - width / 2, 0.5 + width / 2, 0.5 + width / 2], //back
+		[0.5 - width / 2, 0.5 + width / 2, 0.5 - width / 2, 0.5 + width / 2, 1 - sideSize, 0.5 + width / 2], //up
+		[0.5 - width / 2, 0 + sideSize, 0.5 - width / 2, 0.5 + width / 2, 0.5 - width / 2, 0.5 + width / 2] //down
 	];
 
 	for (var meta = 0; meta < 6; meta++) {
@@ -266,9 +267,9 @@ const centerWidth = 0.3125;
 		for (var n in boxe) {
 		  var box = boxe[n];
 		  //var model = BlockRenderer.createModel();
-		  model.addBox(box[0], box[1], box[2], box[3], box[4], box[5], "quartz_block_side", 0);
+		  model.addBox(box[0], box[1], box[2], box[3], box[4], box[5], 155, 0);
 		  //render.addEntry(model);
-	  }
+		}
 		model.addBox(wire[0], wire[1], wire[2], wire[3], wire[4], wire[5], BlockID.utilsWire, 0);
 		model.addBox(0.5 - centerWidth / 2, 0.5 - centerWidth / 2, 0.5 - centerWidth / 2, 0.5 + centerWidth / 2, 0.5 + centerWidth / 2, 0.5 + centerWidth / 2, BlockID.utilsWire, 0);
 		render.addEntry(model);
@@ -319,34 +320,35 @@ function mapGetter(coords, i, meta, atach) {
 	coords.y = Number(coords.y);
 	coords.z = Number(coords.z);
 
+	var sideSize = 0.03;
 	var boxes = [
 		[
-			[0.2, 0.2, 0, 0.8, 0.8, 0.03] //left
+			[0.2, 0.2, 0, 0.8, 0.8, sideSize] //left
 		],
 		[
-			[0.8, 0.8, 0.97, 0.2, 0.2, 1] //right
+			[0.8, 0.8, 1 - sideSize, 0.2, 0.2, 1] //right
 		],
 		[
-			[0.97, 0.8, 0.8, 1, 0.2, 0.2] //forward
+			[1 - sideSize, 0.8, 0.8, 1, 0.2, 0.2] //forward
 		],
 		[
-			[0, 0.2, 0.2, 0.03, 0.8, 0.8] //back
+			[0, 0.2, 0.2, sideSize, 0.8, 0.8] //back
 		],
 		[
-			[0.8, 0.97, 0.8, 0.2, 1, 0.2] //up
+			[0.8, 1 - sideSize, 0.8, 0.2, 1, 0.2] //up
 		],
 		[
-			[0.2, 0, 0.2, 0.8, 0.03, 0.8] //down
+			[0.2, 0, 0.2, 0.8, sideSize, 0.8] //down
 		]
 	];
 
 	var boxesWire = [
-		[0.5 - width / 2, 0.5 - width / 2, 0, 0.5 + width / 2, 0.5 + width / 2, 0.5 - width / 2], //left
-		[0.5 - width / 2, 0.5 - width / 2, 0.5 + width / 2, 0.5 + width / 2, 0.5 + width / 2, 1], //right
-		[0.5 + width / 2, 0.5 - width / 2, 0.5 - width / 2, 1, 0.5 + width / 2, 0.5 + width / 2], //forward
-		[0, 0.5 - width / 2, 0.5 - width / 2, 0.5 - width / 2, 0.5 + width / 2, 0.5 + width / 2], //back
-		[0.5 - width / 2, 0.5 + width / 2, 0.5 - width / 2, 0.5 + width / 2, 1, 0.5 + width / 2], //up
-		[0.5 - width / 2, 0, 0.5 - width / 2, 0.5 + width / 2, 0.5 - width / 2, 0.5 + width / 2] //down
+		[0.5 - width / 2, 0.5 - width / 2, 0 + sideSize, 0.5 + width / 2, 0.5 + width / 2, 0.5 - width / 2], //left
+		[0.5 - width / 2, 0.5 - width / 2, 0.5 + width / 2, 0.5 + width / 2, 0.5 + width / 2, 1 - sideSize], //right
+		[0.5 + width / 2, 0.5 - width / 2, 0.5 - width / 2, 1 - sideSize, 0.5 + width / 2, 0.5 + width / 2], //forward
+		[0 + sideSize, 0.5 - width / 2, 0.5 - width / 2, 0.5 - width / 2, 0.5 + width / 2, 0.5 + width / 2], //back
+		[0.5 - width / 2, 0.5 + width / 2, 0.5 - width / 2, 0.5 + width / 2, 1 - sideSize, 0.5 + width / 2], //up
+		[0.5 - width / 2, 0 + sideSize, 0.5 - width / 2, 0.5 + width / 2, 0.5 - width / 2, 0.5 + width / 2] //down
 	];
 
 	var boxe = [];
@@ -356,15 +358,13 @@ function mapGetter(coords, i, meta, atach) {
 	}
 
 	var render = new ICRender.Model();
-
- for (var n in boxe) {
-		var box = boxe[n];
-		var model = BlockRenderer.createModel();
-
-		model.addBox(box[0], box[1], box[2], box[3], box[4], box[5], "quartz_block_side", 0);
-		render.addEntry(model);
-	}
 	var model = BlockRenderer.createModel();
+	for (var n in boxe) {
+		var box = boxe[n];
+		//var model = BlockRenderer.createModel();
+		model.addBox(box[0], box[1], box[2], box[3], box[4], box[5], 155, 0);
+		//render.addEntry(model);
+	}
 	if (meta >= 0) model.addBox(wire[0], wire[1], wire[2], wire[3], wire[4], wire[5], BlockID.utilsWire, 0);
 	model.addBox(0.5 - centerWidth / 2, 0.5 - centerWidth / 2, 0.5 - centerWidth / 2, 0.5 + centerWidth / 2, 0.5 + centerWidth / 2, 0.5 + centerWidth / 2, BlockID.utilsWire, 0);
 	render.addEntry(model);

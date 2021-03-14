@@ -24,7 +24,7 @@ TileEntity.registerPrototype(BlockID.worldClock, {
 		redstoneSignal: false
 	},
 	redstone: function (params) {
-		devLog(JSON.stringify(params));
+		//devLog(JSON.stringify(params));
 		if (params.onLoad) return;
 		if (params.power > 0)
 			this.data.redstones++;

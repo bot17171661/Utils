@@ -5,6 +5,14 @@ Item.createItem("magnet", "Magnet", {
 	stack: 1
 });
 mod_tip(ItemID.magnet);
+/* IDRegistry.genItemID("enabled_magnet");
+Item.createItem("enabled_magnet", "Magnet", {
+	name: "magnet"
+}, {
+	stack: 1
+});
+mod_tip(ItemID.enabled_magnet);
+Item.setGlint('enabled_magnet', true); */
 Recipes.addShaped({
 	id: ItemID.magnet,
 	count: 1,
@@ -15,11 +23,7 @@ Recipes.addShaped({
 	"iib"
 ], ['i', 265, 0, 'r', 35, 14, 'b', 35, 11]);
 
-var baubleEquipMagnet = false;
-var baubleDescMagnet = false;
-var Baubles = false;;
-
-ModAPI.addAPICallback("BaublesAPI", function(api) {
+/* ModAPI.addAPICallback("BaublesAPI", function(api) {
 	Baubles = api.Baubles;
 	api.Baubles.registerBauble({
 		id: ItemID.magnet,
@@ -33,62 +37,44 @@ ModAPI.addAPICallback("BaublesAPI", function(api) {
 			baubleDescMagnet = false;
 		}
 	});
-})
+}) */
 
-Item.registerUseFunction("magnet", function(coords, item, block) {
-	var extra = new ItemExtraData(Player.getCarriedItem().extra);
-	if (!extra.getBoolean("active")) {
-		Game.tipMessage(Native.Color.GREEN + 'Power: ' + Native.Color.WHITE + 'On');
-		Item.setGlint(ItemID.magnet, true);
-		extra.putBoolean('active', true);
-		Player.setCarriedItem(ItemID.magnet, 1, 0, extra);
-	} else {
+Item.registerUseFunction("magnet", function(coords, item, block, player) {
+	var _playerActor = new PlayerActor(player);
+	var selectedSlot = _playerActor.getSelectedSlot();
+	var extra = item.extra || new ItemExtraData();
+	if (extra.getBoolean('active', false)) {
 		Game.tipMessage(Native.Color.GREEN + 'Power: ' + Native.Color.WHITE + 'Off');
-		Item.setGlint(ItemID.magnet, false);
+		extra.removeEnchant(-134);
 		extra.putBoolean('active', false);
-		Player.setCarriedItem(ItemID.magnet, 1, 0, extra);
+		_playerActor.setInventorySlot(selectedSlot, ItemID.magnet, 1, 0, extra);
+	} else {
+		Game.tipMessage(Native.Color.GREEN + 'Power: ' + Native.Color.WHITE + 'On');
+		extra.addEnchant(-134, 0);
+		extra.putBoolean('active', true);
+		_playerActor.setInventorySlot(selectedSlot, ItemID.magnet, 1, 0, extra);
 	}
 });
 
-var tickssss = 0;
 Callback.addCallback("tick", function() {
-	tickssss++;
-	if (tickssss >= 10) {
-		tickssss = 0;
-		var equiped = searchItem(ItemID.magnet, 0) || baubleEquipMagnet;
-		var magnetActivated;
-		if (searchItem(ItemID.magnet, 0)) {
-			var extra = new ItemExtraData(searchItem(ItemID.magnet, 0).extra);
-			if (!extra.getBoolean("active")) {
-				magnetActivated = false
-			} else {
-				magnetActivated = true
-			}
-		} else if (baubleEquipMagnet) {
-			var baublesMagnet = {
-				extra: null
-			};
-			for (var i = 0; i <= 1; i++) {
-				if (Baubles.container.getSlot("ring" + i).id == ItemID.magnet) {
-					baublesMagnet = Baubles.container.getSlot("ring" + i);
+	if (World.getThreadTime()%10 == 0) {
+		for(var i in _players){
+			var _player = _players[i];
+			var item = searchItem(ItemID.magnet, -1, false, false, _player);
+			if (item) {
+				var extra = item.extra || new ItemExtraData();
+				if (extra.getBoolean("active", false)) {
+					var position = Entity.getPosition(_player);
+					var entity = Entity.getAllInRange(position, 15, 64);
+					for (var k in entity) {
+						if(!entity[k]) continue;
+						Entity.moveToTarget(entity[k], position, {
+							speed: 0.5,
+							denyY: false,
+							jumpVel: 0.5
+						})
+					}
 				}
-			};
-			var extra = new ItemExtraData(baublesMagnet.extra);
-			if (!extra.getBoolean("active")) {
-				magnetActivated = false
-			} else {
-				magnetActivated = true
-			}
-		}
-		if (equiped && magnetActivated) {
-			var p = Player.getPosition();
-			var entity = Entity.getAllInRange(p, 15, 64);
-			for (var i = 0; i < entity.length; i++) {
-				Entity.moveToTarget(entity[i], p, {
-					speed: 0.5,
-					denyY: false,
-					jumpVel: 0.5
-				})
 			}
 		}
 	}

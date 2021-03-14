@@ -1,5 +1,6 @@
-Callback.addCallback("NativeCommand", function(str) {
+/* Callback.addCallback("NativeCommand", function(str) {
     if (str.substr(0, 6) == '/utils') {
+		Game.prevent();
         var commands = str.substr(7).split(" ");
         if (commands[0] == "execute") {
             if (commands.length == 1) return Game.message("/utils execute [command]");
@@ -27,4 +28,4 @@ Callback.addCallback("NativeCommand", function(str) {
             Game.message("execute, get");
         }
     }
-});
+}); */

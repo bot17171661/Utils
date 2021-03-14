@@ -18,12 +18,14 @@ var BWCoordsMap = [
 ];
 
 var num_to_xyz = ['x','y','z'];
-var builderWandBlockLimit = __config__.getNumber('builderWandBlockLimit');
+var _builderWandBlockLimit = __config__.getNumber('builderWandBlockLimit');
 
-function justFunc1(_coords, _side, _block){
+function justFunc1(_coords, _side, _block, _blockSource, _player){
+	var _playerActor = new PlayerActor(_player);
 	var temp_array = [];
 	var blocksPlaced = 0;
-	var gamemode = Game.getGameMode();
+	var gamemode = _playerActor.getGameMode();
+	var builderWandBlockLimit = gamemode == 1 ? _builderWandBlockLimit*2 : _builderWandBlockLimit;
 	var item;
 	var itemCount = 0;
 	if(gamemode != 1){
@@ -39,15 +41,15 @@ function justFunc1(_coords, _side, _block){
 			if(temp_array.indexOf(cts(coords)) != -1) continue
 			temp_array.push(cts(coords));
 			coords.relative = World.getRelativeCoords(coords.x, coords.y, coords.z, _side);
-			var block1 = World.getBlock(coords.x, coords.y, coords.z);
-			var blockOnThisCoords = World.getBlock(coords.relative.x, coords.relative.y, coords.relative.z);
+			var block1 = _blockSource.getBlock(coords.x, coords.y, coords.z);
+			var blockOnThisCoords = _blockSource.getBlock(coords.relative.x, coords.relative.y, coords.relative.z);
 			if(blocksPlaced >= builderWandBlockLimit || (gamemode != 1 && (!item || !item.count || itemCount <= 0))) return;
 			if((blockOnThisCoords.id != 0 || !World.canTileBeReplaced(blockOnThisCoords.id, blockOnThisCoords.data)) || block1.id != _block.id || block1.data != _block.data) continue;
 			blocksPlaced++;
-			World.setBlock(coords.relative.x, coords.relative.y, coords.relative.z, _block.id, _block.data);
+			_blockSource.setBlock(coords.relative.x, coords.relative.y, coords.relative.z, _block.id, _block.data);
 			if(gamemode != 1){
 				itemCount--;
-				Player.setInventorySlot(item.slot, item.id, itemCount, item.data, item.extra);
+				_playerActor.setInventorySlot(item.slot, item.id, itemCount, item.data, item.extra);
 				if(!item.count || itemCount <= 0){
 					item = searchItem(_block.id, _block.data);
 				}
@@ -73,6 +75,6 @@ function justFunc1(_coords, _side, _block){
 	justFunc([_coords]);
 }
 
-Item.registerUseFunction("builderWand", function(coords, item, block){
-	justFunc1(coords, coords.side, block);
+Item.registerUseFunction("builderWand", function(coords, item, block, player){
+	justFunc1(coords, coords.side, block, BlockSource.getDefaultForActor(player), player);
 });

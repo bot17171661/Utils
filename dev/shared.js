@@ -1,6 +1,6 @@
 ModAPI.registerAPI("UtilsAPI", {
-    Combiner: Combiner,
-
+    //Combiner: Combiner,
+    ignoreList: ignoreList, //flacon.js
     requireGlobal: function (command) {
         return eval(command);
     }

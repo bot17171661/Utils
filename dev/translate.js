@@ -1,4 +1,3 @@
-Translation.addTranslation("Angel ring", {ru: "Ангельское кольцо"});
 Translation.addTranslation("XP Storage", {ru: "Хранилище опыта"});
 Translation.addTranslation("Builder wand", {ru: "Палочка строителя"});
 Translation.addTranslation("World Clock", {ru: "Мировые часы"});
@@ -14,3 +13,10 @@ Translation.addTranslation("Extraction pipe", {ru: "Извлекающая тр�
 Translation.addTranslation("Item pipe", {ru: "Предметная труба"});
 Translation.addTranslation("Wrench", { ru: "Гаечный ключ" });
 Translation.addTranslation("1 second = 20 ticks", { ru: "1 секунда = 20 тиков" });
+Translation.addTranslation("Angel Ring", {"cs":"Andělský prsten","de":"Engelsring","es":"Aureola de Ángel","fr":"Anneau d'Ange ","ko":"천사의 고리","pl":"Anielski pierścień","pt":"Anel de Anjo","ru":"Ангельское кольцо","zh":"天使指环"});
+Translation.addTranslation("Invisible Wings", {"cs":"Neviditelná křídla","de":"Unsichtbare Flügel","es":"Alas Invisibles","fr":"Ailes invisibles ","ko":"투명 날개","pl":"Niewidzialne skrzydła","pt":"Asas Invisíveis","ru":"Невидимые крылья","zh":"隐形翅膀"});
+Translation.addTranslation("Feathery Wings", {"cs":"Pírková křídla","de":"Federartige Flügel","es":"Alas con Plumas","fr":"Ailes d'Icare ","ko":"깃털 날개","pl":"Piórowe skrzydła","pt":"Asas com Penas","ru":"Пернатые крылья","zh":"羽翼"});
+Translation.addTranslation("Fairy Wings", {"cs":"Vílí křídla","de":"Feenflügel","es":"Alas de Hada","fr":"Ailes féeriques ","ko":"요정의 날개","pl":"Wróżkowe skrzydła","pt":"Asas de Fada","ru":"Волшебные крылья","zh":"精灵之翼"});
+Translation.addTranslation("Dragon Wings", {"cs":"Dračí křídla","de":"Drachenflügel","es":"Alas de Dragón","fr":"Ailes dragoniques ","ko":"용의 날개","pl":"Smocze skrzydła","pt":"Asas de Dragão","ru":"Драконьи крылья","zh":"龙翼"});
+Translation.addTranslation("Golden Wings", {"cs":"Zlatá křídla","de":"Goldene Flügel","es":"Alas Doradas","fr":"Ailes dorées ","ko":"황금 날개","pl":"Złote skrzydła","pt":"Asas de Ouro","ru":"Золотые крылья","zh":"黄金之翼"});
+Translation.addTranslation("Dark Wings", {"cs":"Tmavá křídla","de":"Dunkle Flügel","es":"Alas Oscuras","fr":"Ailes sombres ","ko":"어둠의 날개","pl":"Ciemne skrzydła","pt":"Asas Negras","ru":"Тёмные крылья","zh":"暗之翼"});

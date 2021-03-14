@@ -1,4 +1,4 @@
-IDRegistry.genItemID("concentratedDust");
+/* IDRegistry.genItemID("concentratedDust");
 Item.createItem("concentratedDust", "Concentrated dust", {
     name: "conc_dust"
 }, {
@@ -21,4 +21,4 @@ Callback.addCallback("PostLoaded", function () {
             data: 0
         }
     })
-});
+}); */

@@ -22,316 +22,105 @@ ModAPI.addAPICallback("ICore", function(api) {
 	wrenches.push(ItemID.wrenchBronze);
 });
 
-var render = new Render({
-	skin: "wire.png"
-});
-render.setPart("body", [{
-		type: "box",
-		coords: {
-			x: 8,
-			y: 8,
-			z: 0
-		},
-		size: {
-			x: 16,
-			y: 1,
-			z: 1
-		},
-		uv: {
-			x: 20,
-			y: 20
+Callback.addCallback("ItemUse", function (coords, item, _block, param1, player) {
+	if ((_block.id == BlockID.utilsWire || _block.id == BlockID.utilsItemGetter) && wrenches.indexOf(item.id) != -1) {
+		var touchCoords = coords.vec;
+		for(var i in touchCoords){
+			var absValue = Math.abs(touchCoords[i])
+			touchCoords[i] = absValue - parseInt(absValue);
 		}
-	},
-	{
-		type: "box",
-		coords: {
-			x: 0,
-			y: 8,
-			z: -8
-		},
-		size: {
-			x: 1,
-			y: 1,
-			z: 16
-		},
-		uv: {
-			x: 20,
-			y: 20
-		}
-	},
-	{
-		type: "box",
-		coords: {
-			x: 0,
-			y: 16,
-			z: 0
-		},
-		size: {
-			x: 1,
-			y: 16,
-			z: 1
-		},
-		uv: {
-			x: 20,
-			y: 20
-		}
-	},
-	{
-		type: "box",
-		coords: {
-			x: 8,
-			y: 8,
-			z: -16
-		},
-		size: {
-			x: 16,
-			y: 1,
-			z: 1
-		},
-		uv: {
-			x: 20,
-			y: 20
-		}
-	},
-	{
-		type: "box",
-		coords: {
-			x: 16,
-			y: 8,
-			z: -8
-		},
-		size: {
-			x: 1,
-			y: 1,
-			z: 16
-		},
-		uv: {
-			x: 20,
-			y: 20
-		}
-	},
-	{
-		type: "box",
-		coords: {
-			x: 16,
-			y: 16,
-			z: -16
-		},
-		size: {
-			x: 1,
-			y: 16,
-			z: 1
-		},
-		uv: {
-			x: 20,
-			y: 20
-		}
-	},
-	{
-		type: "box",
-		coords: {
-			x: 16,
-			y: 16,
-			z: 0
-		},
-		size: {
-			x: 1,
-			y: 16,
-			z: 1
-		},
-		uv: {
-			x: 20,
-			y: 20
-		}
-	},
-	{
-		type: "box",
-		coords: {
-			x: 0,
-			y: 16,
-			z: -16
-		},
-		size: {
-			x: 1,
-			y: 16,
-			z: 1
-		},
-		uv: {
-			x: 20,
-			y: 20
-		}
-	},
-	{
-		type: "box",
-		coords: {
-			x: 8,
-			y: 24,
-			z: 0
-		},
-		size: {
-			x: 16,
-			y: 1,
-			z: 1
-		},
-		uv: {
-			x: 20,
-			y: 20
-		}
-	},
-	{
-		type: "box",
-		coords: {
-			x: 8,
-			y: 24,
-			z: -16
-		},
-		size: {
-			x: 16,
-			y: 1,
-			z: 1
-		},
-		uv: {
-			x: 20,
-			y: 20
-		}
-	},
-	{
-		type: "box",
-		coords: {
-			x: 0,
-			y: 24,
-			z: -8
-		},
-		size: {
-			x: 1,
-			y: 1,
-			z: 16
-		},
-		uv: {
-			x: 20,
-			y: 20
-		}
-	},
-	{
-		type: "box",
-		coords: {
-			x: 16,
-			y: 24,
-			z: -8
-		},
-		size: {
-			x: 1,
-			y: 1,
-			z: 16
-		},
-		uv: {
-			x: 20,
-			y: 20
-		}
-	}
-], {})
-
-var animationRED = new Animation.Base(0, 0, 0);
-animationRED.describe({
-	render: render.getId()
-});
-
-var selectedWire = {
-	x: 0,
-	y: 0,
-	z: 0,
-	selected: false
-};
-
-Callback.addCallback("ItemUse", function (coords, item, block) {
-	if (wrenches.indexOf(item.id) != -1) {
-		//devLog('blockID: ' + block.id);
-		if (block.id == 0) return;
-		//Game.prevent();
-		if (Entity.getSneaking(Player.get()) && (block.id == BlockID.utilsWire || block.id == BlockID.utilsItemGetter)) {
-			//devLog('block selected');
-			if (selectedWire.selected) animationRED.destroy();
-			selectedWire.x = coords.x;
-			selectedWire.y = coords.y;
-			selectedWire.z = coords.z;
-			selectedWire.selected = true;
-			animationRED.setPos(coords.x, coords.y, coords.z);
-			animationRED.load();
-			return;
-		} else if (selectedWire.selected) {
-			//devLog('search target');
-			if (Math.sqrt(Math.pow(coords.x - selectedWire.x, 2) + Math.pow(coords.y - selectedWire.y, 2) + Math.pow(coords.z - selectedWire.z, 2)) != 1) {
-				//devLog('target is selector or target is far ER... ER... ER... ER...')
-				selectedWire.selected = false;
-				animationRED.destroy();
-				return;
+		var side = null;
+		for(var i in clickBoxes){
+			var box = clickBoxes[i].box;
+			if(touchCoords.x >= box[0] && touchCoords.x <= box[3] && touchCoords.y >= box[1] && touchCoords.y <= box[4] && touchCoords.z >= box[2] && touchCoords.z <= box[5]){
+				side = clickBoxes[i].side;
+				break;
 			}
-			var sel = selectedWire.x + "," + selectedWire.y + "," + selectedWire.z;
-			//devLog('sel: ' + sel);
-			var crds = coords.x + "," + coords.y + "," + coords.z;
-			//devLog('crds: ' + crds);
-			if (!groups[sel]) return Game.tipMessage("§aERROR");
-			if (groups[sel].not) groups_sel = groups[sel].not.map(function(d) {
-				return d.x + ',' + d.y + ',' + d.z
-			});
-			if (groups[crds] && groups[crds].not) groups_crds = groups[crds].not.map(function(d) {
-				return d.x + ',' + d.y + ',' + d.z
-			});
-			var a = groups[sel].not && groups[sel].not.length > 0 && groups_sel.indexOf(crds) != -1;
-			var b = groups[crds] && groups[crds].not && groups[crds].not.length > 0 && groups_crds.indexOf(sel) != -1;
-			if (a || b) {
-				if (a) {
-					//devLog('target must be destroyed')
-					groups[sel].not.splice(groups_sel.indexOf(crds), 1);
-					ignored['not' + sel + ':' + crds + 'utilsWire'] = ignored['not' + sel + ':' + crds + 'utilsWire'] >= 0 ? ignored['not' + sel + ':' + crds + 'utilsWire'] + 1 : 0;
-					BlockRenderer.unmapAtCoords(selectedWire.x, selectedWire.y, selectedWire.z);
-					mapGetter(selectedWire, groups[sel].i, groups[sel].meta);
-					//devLog('target destroyed')
-				};
-				if (b) {
-					//devLog('target must be destroyed')
-					groups[crds].not.splice(groups_crds.indexOf(sel), 1);
-					ignored['not' + crds + ':' + sel + 'utilsWire'] = ignored['not' + crds + ':' + sel + 'utilsWire'] >= 0 ? ignored['not' + crds + ':' + sel + 'utilsWire'] + 1 : 0;
-					BlockRenderer.unmapAtCoords(coords.x, coords.y, coords.z);
-					mapGetter(coords, groups[crds].i, groups[crds].meta);
-					//devLog('target destroyed')
-				};
+		}
+		var blockSource = BlockSource.getDefaultForActor(player);
+		var selectedWire = coords;
+		var coords = World.getRelativeCoords(coords.x, coords.y, coords.z, side);
+		var block = blockSource.getBlock(coords.x, coords.y, coords.z);
+		if (block.id == 0 || side == null) return;
+		var currentDimension = blockSource.getDimension();
+		var idcurrentDimension = 'd' + currentDimension;
+		if(!allGroups[idcurrentDimension]) allGroups[idcurrentDimension] = {};
+		var groups = allGroups[idcurrentDimension];
+		var updateGroup = {};
+		if(!regionGroups[idcurrentDimension]) regionGroups[idcurrentDimension] = {};
+		var sel = selectedWire.x + "," + selectedWire.y + "," + selectedWire.z;
+		var crds = coords.x + "," + coords.y + "," + coords.z;
+		var regionCentreCoords = calculateCentre(selectedWire);
+		var string_regionCentreCoords = cts(regionCentreCoords);
+		var _regionGroups = regionGroups[idcurrentDimension][string_regionCentreCoords];
+		if(!networkTiles[idcurrentDimension])networkTiles[idcurrentDimension] = {};
+		if(!(_networkTile = networkTiles[idcurrentDimension][string_regionCentreCoords])){
+			_networkTile = networkTiles[idcurrentDimension][string_regionCentreCoords] = new NetworkEntity(wireNetworkEntityType, createTargetData(regionCentreCoords, blockSource));
+		}
+		if (!groups[sel]) return tipMessage(player, "§aERROR");
+		if (groups[sel].not) groups_sel = groups[sel].not.map(function(d) {
+			return d.x + ',' + d.y + ',' + d.z
+		});
+		if (groups[crds] && groups[crds].not) groups_crds = groups[crds].not.map(function(d) {
+			return d.x + ',' + d.y + ',' + d.z
+		});
+		var a = groups[sel].not && groups[sel].not.length > 0 && groups_sel.indexOf(crds) != -1;
+		var b = groups[crds] && groups[crds].not && groups[crds].not.length > 0 && groups_crds.indexOf(sel) != -1;
+		var not_sel_string = 'not' + sel + ':' + crds + 'utilsWire' + currentDimension;
+		var not_crds_string = 'not' + crds + ':' + sel + 'utilsWire' + currentDimension;
+		if (a || b) {
+			if (a) {
+				groups[sel].not.splice(groups_sel.indexOf(crds), 1);
+				ignored[not_sel_string] = ignored[not_sel_string] >= 0 ? ignored[not_sel_string] + 1 : 0;
+				mapGetter(selectedWire, groups[sel].meta, groups, true, blockSource);
+				updateGroup[sel] = _regionGroups[sel] = groups[sel];
+				if(groups[crds])updateGroup[crds] = _regionGroups[crds] = groups[crds];
+				_networkTile.send("updateBlock", {coords: selectedWire, meta: groups[sel].meta, updateGroup: updateGroup, ignored:ignored});
+			};
+			if (b) {
+				groups[crds].not.splice(groups_crds.indexOf(sel), 1);
+				ignored[not_crds_string] = ignored[not_crds_string] >= 0 ? ignored[not_crds_string] + 1 : 0;
+				mapGetter(coords, groups[crds].meta, groups, true, blockSource);
+				updateGroup[sel] = _regionGroups[sel] = groups[sel];
+				if(groups[crds])updateGroup[crds] = _regionGroups[crds] = groups[crds];
+				_networkTile.send("updateBlock", {coords: selectedWire, meta: groups[sel].meta, updateGroup: updateGroup, ignored:ignored});
+			};
+		} else {
+			var groupAdd = [];
+			if (groups[sel].not) {
+				groups[sel].not.push({
+					x: coords.x,
+					y: coords.y,
+					z: coords.z
+				});
 			} else {
-				//devLog('target must be added')
-				if (groups[sel].not) {
-					groups[sel].not.push({
-						x: coords.x,
-						y: coords.y,
-						z: coords.z
+				groups[sel].not = [{
+					x: coords.x,
+					y: coords.y,
+					z: coords.z
+				}];
+			}
+			groupAdd.push([not_sel_string + (ignored[not_sel_string] >= 0 ? ignored[not_sel_string] : ''), block.id]);
+			if ((block.id == BlockID.utilsWire || block.id == BlockID.utilsItemGetter) && groups[crds]) {
+				if (groups[crds].not) {
+					groups[crds].not.push({
+						x: selectedWire.x,
+						y: selectedWire.y,
+						z: selectedWire.z
 					});
 				} else {
-					groups[sel].not = [{
-						x: coords.x,
-						y: coords.y,
-						z: coords.z
+					groups[crds].not = [{
+						x: selectedWire.x,
+						y: selectedWire.y,
+						z: selectedWire.z
 					}];
 				}
-				ICRender.getGroup('not' + sel + ':' + crds + 'utilsWire' + (ignored['not' + sel + ':' + crds + 'utilsWire'] >= 0 ? ignored['not' + sel + ':' + crds + 'utilsWire'] : '')).add(block.id, -1);
-				if (block.id == BlockID.utilsWire || block.id == BlockID.utilsItemGetter) {
-					if (groups[crds].not) {
-						groups[crds].not.push({
-							x: selectedWire.x,
-							y: selectedWire.y,
-							z: selectedWire.z
-						});
-					} else {
-						groups[crds].not = [{
-							x: selectedWire.x,
-							y: selectedWire.y,
-							z: selectedWire.z
-						}];
-					}
-					ICRender.getGroup('not' + crds + ':' + sel + 'utilsWire' + (ignored['not' + crds + ':' + sel + 'utilsWire'] >= 0 ? ignored['not' + crds + ':' + sel + 'utilsWire'] : '')).add(World.getBlock(selectedWire.x, selectedWire.y, selectedWire.z).id, -1);
-				}
-				BlockRenderer.unmapAtCoords(selectedWire.x, selectedWire.y, selectedWire.z);
-				mapGetter(selectedWire, groups[sel].i, groups[sel].meta)
-				//devLog('target added')
+				groupAdd.push([not_crds_string + (ignored[not_crds_string] >= 0 ? ignored[not_crds_string] : ''), _block.id]);
 			}
+			mapGetter(selectedWire, groups[sel].meta, groups, true, blockSource);
+			updateGroup[sel] = _regionGroups[sel] = groups[sel];
+			if(groups[crds])updateGroup[crds] = _regionGroups[crds] = groups[crds];
+			_networkTile.send("updateBlock", {groupAdd: groupAdd, coords: selectedWire, meta: groups[sel].meta, updateGroup: updateGroup, ignored:ignored});
 		}
 	}
 });

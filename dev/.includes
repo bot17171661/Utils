@@ -1,3 +1,4 @@
+header.js
 commands.js
 other.js
 translate.js
@@ -8,13 +9,14 @@ items/builderWand.js
 items/magnet.js
 items/craftingItems.js
 items/flacon.js
+items/utilsHammer.js
 
 
 blocks/XPStorage.js
 blocks/WorldT.js
 blocks/grave.js
 blocks/itemCollector.js
-blocks/Combiner.js
+// blocks/Combiner.js
 blocks/wire.js
 blocks/XPFarm.js
 

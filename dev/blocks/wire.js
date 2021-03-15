@@ -806,7 +806,7 @@ function init_wireGUI_elements(){
 		isInt: true,
 		value: 0,
 		onNewValue: function (value, itemContainerUiHandler, element) {
-			if(!itemContainerUiHandler || !wireGuiData.networkData) return;
+			if(!itemContainerUiHandler || !wireGuiData.networkData || wireGuiData.networkData.getInt('updateFreq', 0) == value) return;
 			wireGuiData.networkData.putInt('updateFreq', value);
 			wireGuiData.networkData.putBoolean('update', true);
 			itemContainerUiHandler.setBinding('text', 'text', Translation.translate("Update frequency (in ticks)") + " : " + value);
@@ -1046,6 +1046,7 @@ TileEntity.registerPrototype(BlockID.utilsItemGetter, {
 				content.elements["image_list_mode"].bitmap = 'wire_' + eventData.list_mode;
 				content.elements["image_ignore_item_data"].bitmap = eventData.ignore_item_data ? 'item_data_ignore' : 'item_data_not_ignore';
 				container.setText('text', Translation.translate("Update frequency (in ticks)") + " : " + eventData.updateFreq);
+				wireGuiData.networkData.putInt('updateFreq', eventData.updateFreq);
 				container.setScale('DellayScroll', eventData.updateFreq);
 			}
 		}
@@ -1063,7 +1064,12 @@ TileEntity.registerPrototype(BlockID.utilsItemGetter, {
 	events: {
 		updateFreq: function(packetData, packetExtra, connectedClient) {
             this.data.updateFreq = packetData.updateFreq;
-			this.updateWindow();
+			var allClients = this.container.getNetworkEntity().getClients();
+			var iterator = allClients.iterator();
+			while(iterator.hasNext()){
+				var client = iterator.next();
+				if(client != connectedClient)this.updateWindow(client);
+			}
 		}
 	}
 })

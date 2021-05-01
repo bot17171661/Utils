@@ -8,6 +8,7 @@ const JAVA_ANIMATOR = android.animation.ValueAnimator;
 const JAVA_HANDLER = android.os.Handler;
 const LOOPER_THREAD = android.os.Looper;
 const JAVA_HANDLER_THREAD = new JAVA_HANDLER(LOOPER_THREAD.getMainLooper());
+const JavaFONT_ = WRAP_JAVA('com.zhekasmirnov.innercore.api.mod.ui.types.Font');
 
 var InnerCore_pack = FileTools.ReadJSON(__packdir__ + 'manifest.json');
 
@@ -177,7 +178,6 @@ Callback.addCallback('NativeGuiChanged', function (screenName) {
 });
 
 const mod_tip = function (id) {
-	if (BlockID[id]) id = Block.convertBlockToItemId(id);
 	Callback.addCallback('PostLoaded', function () {
 		var _func = Item.nameOverrideFunctions[id];
 		Item.registerNameOverrideFunction(id, function (item, name) {
@@ -498,9 +498,9 @@ function getItemUid(item){
 function parseItemUid(itemUid){
 	var splits = itemUid.split('_');
 	return {
-		id: splits[0],
-		data: splits[1],
-		extra: splits[2] || null
+		id: Number(splits[0]),
+		data: Number(splits[1]),
+		extra: splits[2] ? Number(splits[2]) : null
 	}
 }
 
@@ -582,4 +582,10 @@ function checkBlocksOnSides(_blockSource, _coords, _blocks, _toList, _func){
 				return coords;
 	}
 	return _toList ? list : false;
+}
+
+function getTextElementWidth(_textElement, drawScale){
+	var _font = new JavaFONT_(_textElement.font);
+	var width = _font.getBounds(_textElement.text, _textElement.x * drawScale, _textElement.y * drawScale, parseFloat(1.0)).width();
+	return width;
 }

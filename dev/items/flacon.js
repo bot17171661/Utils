@@ -165,21 +165,18 @@ Item.registerUseFunction("flacon_with_soul", function(coords, item, block, playe
 	_playerActor = new PlayerActor(player);
 	var newCoords = {
 		x: coords.relative.x + 0.5,
-		y: coords.relative.y + 0.5,
+		y: coords.relative.y,
 		z: coords.relative.z + 0.5
 	}
 	var _blockSource = BlockSource.getDefaultForActor(player);
 	var entityType = item.extra.getInt('type') || item.extra.getString('type');
 	var newEntity = _blockSource.spawnEntity(newCoords.x, newCoords.y, newCoords.z, entityType);
 	entityTag.putInt64('UniqueID', newEntity);
-	var isnewListTag;
-	var posListTag = entityTag.getListTag('Pos') || (isnewListTag = new NBT.ListTag());
+	var posListTag = new NBT.ListTag();
 	posListTag.putFloat(0, newCoords.x);
 	posListTag.putFloat(1, newCoords.y);
 	posListTag.putFloat(2, newCoords.z);
-	alert(JSON.stringify(posListTag.toScriptable()));
-	if(isnewListTag)entityTag.putListTag('Pos', posListTag);
-	Debug.big(entityTag.toScriptable());
+	entityTag.putListTag('Pos', posListTag);
 	Entity.setCompoundTag(newEntity, entityTag);
 	_playerActor.setInventorySlot(_playerActor.getSelectedSlot(), ItemID.flacon_for_souls, 1, 0, null);
 });

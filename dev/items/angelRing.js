@@ -127,6 +127,7 @@ var EntityDataAPI = ModAPI.requireGlobal('EntityDataRegistry');
 var wingVertexData = [[0,0,0,0,0],[0,0,1,16,0],[0,-1,0,0,16],[0,-1,1,16,16],[0,0,1,16,0],[0,-1,0,0,16]];
 var tickTime = 0;
 Callback.addCallback("LocalTick", function() {
+	tickTime++;
 	var threadTime = World.getThreadTime();
 	if(threadTime%2 == 0 && (playerRingData = playerRenders[Player.get()])) {
 		playerRingData.inRange = true;
@@ -159,7 +160,7 @@ Callback.addCallback("LocalTick", function() {
 	if(InnerCore_pack.packVersionCode <= 108) return;
 	var settings_ = playerRenders[Player.get()];
 	if(!settings_) return;
-	var xRotate = (1 + Math.cos((tickTime++) / 4)) * (settings_.isFlying ? 20 : 2) + 25;
+	var xRotate = (1 + Math.cos((tickTime) / 4)) * (settings_.isFlying ? 20 : 2) + 25;
 	var wing1 = settings_.wing1;
 	var wing2 = settings_.wing2;
 	wing1.clear();
@@ -185,7 +186,7 @@ Callback.addCallback("LocalTick", function() {
 		if(_players[i] == Player.get()) continue;
 		var settings_ = playerRenders[_players[i]];
 		if(!settings_ || !settings_.inRange) continue;
-		var xRotate = (1 + Math.cos((tickTime++) / 4)) * (settings_.isFlying ? 20 : 2) + 25;
+		var xRotate = (1 + Math.cos((tickTime) / 4)) * (settings_.isFlying ? 20 : 2) + 25;
 		var wing1 = settings_.wing1;
 		var wing2 = settings_.wing2;
 		wing1.clear();

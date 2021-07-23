@@ -52,11 +52,12 @@ TileEntity.registerPrototype(BlockID.itemCollector, {
                 var tile = StorageInterface.getStorage(this.blockSource, _coords.x, _coords.y, _coords.z);
                 if(tile){
                     //tile.addItem(container_slot, i, Item.getMaxStack(container_slot.id));
-                    var slots = tile.getInputSlots(i);
+                    var side = reverseSides[i];
+                    var slots = tile.getInputSlots(side);
                     var maxStack = Item.getMaxStack(container_slot.id);
                     for(var k in slots){
                         var slot = tile.container.getSlot(slots[k]);
-                        if((!tile.isValidInput || tile.isValidInput(container_slot, i, this)) && (!tile.isValidSlotInput || tile.isValidSlotInput(slots[k], container_slot, i)) && (slot.id == 0 || (compareSlots(slot, container_slot, true) && slot.count < maxStack))){
+                        if((!tile.isValidInput || tile.isValidInput(container_slot, side, this)) && (!tile.isValidSlotInput || tile.isValidSlotInput(slots[k], container_slot, side)) && (slot.id == 0 || (compareSlots(slot, container_slot, true) && slot.count < maxStack))){
                             var decount = Math.min(maxStack - slot.count, container_slot.count);
                             tile.container.setSlot(slots[k], container_slot.id, slot.count + decount, container_slot.data, container_slot.extra);
                             this.container.setSlot("slot", container_slot.id, container_slot.count - decount, container_slot.data, container_slot.extra);

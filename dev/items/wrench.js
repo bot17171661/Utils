@@ -81,9 +81,9 @@ Callback.addCallback("ItemUse", function (coords, item, _block, param1, player) 
 				groups[crds].not.splice(groups_crds.indexOf(sel), 1);
 				ignored[not_crds_string] = ignored[not_crds_string] >= 0 ? ignored[not_crds_string] + 1 : 0;
 				mapGetter(coords, groups[crds].meta, groups, true, blockSource);
-				updateGroup[sel] = _regionGroups[sel] = groups[sel];
+				updateGroup[crds] = _regionGroups[crds] = groups[crds];
 				if(groups[crds])updateGroup[crds] = _regionGroups[crds] = groups[crds];
-				_networkTile.send("updateBlock", {coords: selectedWire, meta: groups[sel].meta, updateGroup: updateGroup, ignored:ignored});
+				_networkTile.send("updateBlock", {coords: coords, meta: groups[sel].meta, updateGroup: updateGroup, ignored:ignored});
 			};
 		} else {
 			var groupAdd = [];

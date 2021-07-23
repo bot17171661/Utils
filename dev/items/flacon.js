@@ -139,7 +139,7 @@ function createMobTag(tag_json){
 	return tag;
 };
 
-var ignoreList = [63, 53, 52, 89, 91, 65, 84, 98, 100, 96, 69, 68, 70, 66, 85, 71, 87, 82, 64, 73, 86, 81, 94, 79, 72, 103, 80, 61, 95, 93];
+var ignoreList = [63, 53, 52, 89, 91, 65, 84, 98, 100, 96, 69, 68, 70, 66, 85, 71, 87, 82, 64, 73, 86, 81, 94, 79, 72, 103, 80, 61, 95, 93, 83];
 
 Callback.addCallback("EntityHurt", function(attacker, victim, damage, damageType) {
 	if (_players.indexOf(attacker) != -1 && damageType == 2 && victim && Entity.getCarriedItem(attacker).id == ItemID.flacon_for_souls && (entityType = (Entity.getType(victim) || Entity.getTypeAddon(victim))) && ignoreList.indexOf(entityType) == -1) {

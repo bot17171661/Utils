@@ -89,6 +89,7 @@ function calculateCentre(coords, notignoreY){
 	return _object;
 }
 
+var checkClients = {};
 const wireNetworkEntityType = new NetworkEntityType('utils.wire');
 wireNetworkEntityType.setClientListSetupListener(function(list, target, networkEntity){
 	//Logger.Log('SetupNetworkEntity on: ' + cts(target.coords));
@@ -96,7 +97,7 @@ wireNetworkEntityType.setClientListSetupListener(function(list, target, networkE
 }).addClientPacketListener("updateBlock", function(target, networkEntity, packetData){
 	if(!target) {
 		networkEntity.send("fixTarget", {});
-		return// Logger.Log('No target: ' + JSON.stringify(target));
+		return ;//Logger.Log('No target: ' + JSON.stringify(target));
 	}
 	if(packetData.ignored) ignored = packetData.ignored;
 	if(packetData.regionGroup)target.regionGroup = packetData.regionGroup;
@@ -118,16 +119,37 @@ wireNetworkEntityType.setClientListSetupListener(function(list, target, networkE
 }).addServerPacketListener("fixTarget", function(target, networkEntity, client, packetData, _str){
 	//Logger.Log('Server get fixTarget packet');
 	var __type = networkEntity.getType();
+	var netName = networkEntity.getName();
 	var data = __type.newClientAddPacket(networkEntity, client);
-	networkEntity.send("fixTarget", data);
+	var clientsArray = checkClients[netName] || (checkClients[netName] = []);
+	if(clientsArray.indexOf(client) == -1)clientsArray.push(client);
+	networkEntity.send(client, "fixTarget", data);
+}).addServerPacketListener("successChecked", function(target, networkEntity, client, packetData, _str){
+	//Logger.Log('Server get successChecked| Client: ' + client);
+	var netName = networkEntity.getName();
+	if(!checkClients[netName] || checkClients[netName].indexOf(client) == -1) return;
+	checkClients[netName].splice(checkClients[netName].indexOf(client), 1);
 }).addClientPacketListener("fixTarget", function(target, networkEntity, packetData, _str){
 	//Logger.Log('Client get fixTarget packet');
 	var __type = networkEntity.getType();
 	__type.onClientEntityAdded(networkEntity, packetData);
+}).addClientPacketListener("checkTarget", function(target, networkEntity, packetData, _str){
+	//Logger.Log('Client get checkTarget packet');
+	if(!target) {
+		networkEntity.send("fixTarget", {});
+		return ;//Logger.Log('No target: ' + JSON.stringify(target));
+	} else {
+		networkEntity.send("successChecked", {});
+	}
 }).setClientAddPacketFactory(function(target, networkEntity, client){
-	//Logger.Log('SendInitPacketToClient: ' + JSON.stringify({coords: target.coords, dim: target.blockSource.getDimension(), regionGroup: (regionGroups['d'+target.blockSource.getDimension()] || {})[cts(target.coords)]}));
+	//Logger.Log('SendInitPacketToClient| Client: ' + client + " |data: " + JSON.stringify({coords: target.coords, dim: target.blockSource.getDimension(), regionGroup: (regionGroups['d'+target.blockSource.getDimension()] || {})[cts(target.coords)]}));
+	//checkClients.push({time: World.getThreadTime() + 40, networkEntity: networkEntity});
+	var netName = networkEntity.getName();
+	var clientsArray = checkClients[netName] || (checkClients[netName] = []);
+	if(clientsArray.indexOf(client) == -1)clientsArray.push(client);
 	return {coords: target.coords, dim: target.blockSource.getDimension(), regionGroup: (regionGroups['d'+target.blockSource.getDimension()] || {})[cts(target.coords)]};
 }).setClientEntityRemovedListener(function(target, networkEntity){
+	//Logger.Log('ClientEntityRemoved: ' + JSON.stringify(packetData));
 	for (var i in target.regionGroup) {
 		var splited = i.split(",");
 		var coords = {
@@ -159,6 +181,14 @@ wireNetworkEntityType.setClientListSetupListener(function(list, target, networkE
 });
 
 Callback.addCallback('tick', function(){
+	if(World.getThreadTime()%100 == 0)for(var i in checkClients){
+		//alert('Network entity: ' + i);
+		for(var k in checkClients[i]){
+			var client = checkClients[i][k];
+			//alert('Player: ' + client.getPlayerUid());
+			client.send("system.entity.packet#" + i + "#" + "checkTarget", {});
+		}
+	}
 	if(World.getThreadTime()%40 != 0) return;
 	for(var dim in networkTiles){
 		if(!networkTiles[dim]) continue;
@@ -390,11 +420,11 @@ var boxes1 = [{
 }];
 
 var clickBoxes = [{
-	side: 4,
+	side: 5,
 	box: [0.5 + centerWidth / 2, 0.5 - centerWidth / 2, 0.5 - centerWidth / 2, 1, 0.5 + centerWidth / 2, 0.5 + centerWidth / 2]
 },
 {
-	side: 5,
+	side: 4,
 	box: [0, 0.5 - centerWidth / 2, 0.5 - centerWidth / 2, 0.5 - centerWidth / 2, 0.5 + centerWidth / 2, 0.5 + centerWidth / 2]
 },
 {
@@ -1043,6 +1073,7 @@ TileEntity.registerPrototype(BlockID.utilsItemGetter, {
 		containerEvents: {
 			updateWindow: function(container, window, content, eventData){
 				wireGuiData.networkData = SyncedNetworkData.getClientSyncedData(eventData.name);
+				if(!content)content = wireGUI.getWindow('main').getContent();
 				content.elements["image_list_mode"].bitmap = 'wire_' + eventData.list_mode;
 				content.elements["image_ignore_item_data"].bitmap = eventData.ignore_item_data ? 'item_data_ignore' : 'item_data_not_ignore';
 				container.setText('text', Translation.translate("Update frequency (in ticks)") + " : " + eventData.updateFreq);
